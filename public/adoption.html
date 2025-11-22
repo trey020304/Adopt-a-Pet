@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png" />
+  <link rel="apple-touch-icon" sizes="72x72" href="img/apple-touch-icon-72x72.png" />
+  <link rel="apple-touch-icon" sizes="114x114" href="img/apple-touch-icon-114x114.png" />
+
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+  <link rel="stylesheet" type="text/css" href="fonts/font-awesome/css/font-awesome.css" />
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
+  <link rel="stylesheet" type="text/css" href="css/nivo-lightbox/nivo-lightbox.css" />
+  <link rel="stylesheet" type="text/css" href="css/nivo-lightbox/default.css" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,500,600,700,800,900" rel="stylesheet" />
+  <title>Adoption — Adopt a Pet</title>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav id="menu" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand page-scroll" href="index.html">
+          <img src="img/nav-logo.png" alt="logo" class="navbar-logo" /> Adopt a Pet
+        </a>
+      </div>
+
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="index.html#features" class="page-scroll">Features</a></li>
+          <li><a href="index.html#about" class="page-scroll">About</a></li>
+          <li class="active"><a href="adoption.html" class="page-scroll">Adopt</a></li>
+          <li><a href="index.html#portfolio" class="page-scroll">Gallery</a></li>
+          <li><a href="index.html#team" class="page-scroll">Team</a></li>
+          <li><a href="index.html#contact" class="page-scroll">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header id="header" style="padding-top:80px;">
+    <div class="container text-center" style="padding:80px 0;">
+      <h1 style="font-size:48px; font-weight:700; color:#333;">Available for Adoption</h1>
+      <p style="max-width:800px; margin:20px auto; color:#333;">Meet the wonderful pets waiting for their forever homes. Click on any pet to view more details.</p>
+      
+      <!-- Search + Filters -->
+      <div style="max-width:900px; margin:40px auto 20px;">
+        <div class="search-controls" style="display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;">
+          <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="Search by name or breed..." 
+            style="
+              width:420px;
+              padding:12px 20px;
+              font-size:16px;
+              border:2px solid #9c6644;
+              border-radius:25px;
+              outline:none;
+              transition:all 0.3s ease;
+            "
+            onkeyup="filterAnimals()"
+          />
+
+          <select id="typeSelect" onchange="onTypeChange()" style="padding:10px 14px;border-radius:25px;border:2px solid #ddd;background:#fff;">
+            <option value="">All Types</option>
+            <option value="Cat">Cat</option>
+            <option value="Dog">Dog</option>
+          </select>
+
+          <select id="breedSelect" onchange="filterAnimals()" style="padding:10px 14px;border-radius:25px;border:2px solid #ddd;background:#fff;min-width:180px;">
+            <option value="">All Breeds</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Adoption Gallery Section -->
+  <section id="adoption-gallery">
+    <div class="container">
+      <div class="adoption-gallery-grid" id="adoptionGrid">
+        <!-- Animals will be inserted here by JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Animal Details Modal -->
+  <div id="animalModal" class="animal-details-modal" style="display:none;">
+    <div class="animal-details-panel" id="modalContent">
+      <button class="modal-close-btn" onclick="closeModal()">×</button>
+      <!-- Modal content will be inserted here by JavaScript -->
+    </div>
+  </div>
+
+  <!-- Image Preview Lightbox -->
+  <div id="imagePreview" class="image-preview-lightbox" style="display:none;">
+    <div class="image-preview-container" onclick="event.stopPropagation()">
+      <button class="preview-close-btn" onclick="closePreview()">×</button>
+      <img id="previewImage" src="" alt="Preview" class="preview-image" />
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="text/javascript" src="js/jquery.1.11.1.js"></script>
+  <script type="text/javascript" src="js/bootstrap.js"></script>
+  <script type="text/javascript">
+    // Animal data
+    const animals = [
+      {
+        id: 1,
+        name: "Whiskers",
+        image: "img/sample_adopt/cat 1.jpg",
+        galleryImages: [
+          "img/sample_adopt/cat 1.jpg",
+          "img/sample_adopt/cat 1.jpg",
+          "img/sample_adopt/cat 1.jpg"
+        ],
+        type: "Cat",
+        age: "2 years",
+        sex: "Female",
+        breed: "Tabby Mix",
+        size: "4 lbs",
+        health: "Healthy, up-to-date on vaccinations",
+        behavior: "Friendly, playful, good with children",
+        rescuerName: "Jane Smith",
+        rescuerContact: "jane@petrescue.com"
+      },
+      {
+        id: 2,
+        name: "Shadow",
+        image: "img/sample_adopt/cat 2.jpg",
+        galleryImages: [
+          "img/sample_adopt/cat 2.jpg",
+          "img/sample_adopt/cat 2.jpg",
+          "img/sample_adopt/cat 2.jpg"
+        ],
+        type: "Cat",
+        age: "1 year",
+        sex: "Male",
+        breed: "Black Domestic Shorthair",
+        size: "5 lbs",
+        health: "Healthy, neutered",
+        behavior: "Shy but warming up, needs patient home",
+        rescuerName: "John Doe",
+        rescuerContact: "john@petrescue.com"
+      },
+      {
+        id: 3,
+        name: "Mittens",
+        image: "img/sample_adopt/cat 3.jpg",
+        galleryImages: [
+          "img/sample_adopt/cat 3.jpg",
+          "img/sample_adopt/cat 3.jpg",
+          "img/sample_adopt/cat 3.jpg"
+        ],
+        type: "Cat",
+        age: "3 years",
+        sex: "Female",
+        breed: "British Shorthair",
+        size: "6 lbs",
+        health: "Healthy, spayed",
+        behavior: "Affectionate, loves attention",
+        rescuerName: "Sarah Johnson",
+        rescuerContact: "sarah@petrescue.com"
+      },
+      {
+        id: 4,
+        name: "Max",
+        image: "img/sample_adopt/dog 1.jpg",
+        galleryImages: [
+          "img/sample_adopt/dog 1.jpg",
+          "img/sample_adopt/dog 1.jpg",
+          "img/sample_adopt/dog 1.jpg"
+        ],
+        type: "Dog",
+        age: "3 years",
+        sex: "Male",
+        breed: "Miniature Poodle Mix",
+        size: "55 lbs",
+        health: "Healthy, neutered, vaccinated",
+        behavior: "Friendly, energetic, good with families",
+        rescuerName: "Mike Wilson",
+        rescuerContact: "mike@petrescue.com"
+      },
+      {
+        id: 5,
+        name: "Bella",
+        image: "img/sample_adopt/dog 2.jpg",
+        galleryImages: [
+          "img/sample_adopt/dog 2.jpg",
+          "img/sample_adopt/dog 2.jpg",
+          "img/sample_adopt/dog 2.jpg"
+        ],
+        type: "Dog",
+        age: "2 years",
+        sex: "Female",
+        breed: "Staffordshire Bull Terrier",
+        size: "50 lbs",
+        health: "Healthy, minor hip dysplasia (manageable)",
+        behavior: "Gentle, loves walks, good with other dogs",
+        rescuerName: "Emily Brown",
+        rescuerContact: "emily@petrescue.com"
+      },
+      {
+        id: 6,
+        name: "Rocky",
+        image: "img/sample_adopt/dog 3.jpg",
+        galleryImages: [
+          "img/sample_adopt/dog 3.jpg",
+          "img/sample_adopt/dog 3.jpg",
+          "img/sample_adopt/dog 3.jpg"
+        ],
+        type: "Dog",
+        age: "4 years",
+        sex: "Male",
+        breed: "Golden Retriever",
+        size: "65 lbs",
+        health: "Healthy, fully vaccinated",
+        behavior: "Protective, loyal, needs experienced handler",
+        rescuerName: "Tom Martinez",
+        rescuerContact: "tom@petrescue.com"
+      }
+    ];
+
+    // Initialize gallery on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      renderGallery();
+      populateBreedOptions();
+    });
+
+    // Populate breed dropdown dynamically based on animals and selected type
+    function populateBreedOptions(selectedType) {
+      const breedSelect = document.getElementById('breedSelect');
+      if (!breedSelect) return;
+
+      const breeds = animals
+        .filter(a => !selectedType || selectedType === '' || a.type.toLowerCase() === selectedType.toLowerCase())
+        .map(a => a.breed)
+        .filter(Boolean);
+
+      const uniqueBreeds = Array.from(new Set(breeds)).sort((a, b) => a.localeCompare(b));
+
+      breedSelect.innerHTML = '<option value="">All Breeds</option>' + uniqueBreeds.map(b => `<option value="${b}">${b}</option>`).join('');
+    }
+
+    function onTypeChange() {
+      const type = document.getElementById('typeSelect').value;
+      populateBreedOptions(type);
+      filterAnimals();
+    }
+
+    // Filter animals based on search input, type and breed
+    function filterAnimals() {
+      const searchInput = document.getElementById('searchInput').value.toLowerCase().trim();
+      const typeFilter = document.getElementById('typeSelect').value;
+      const breedFilter = document.getElementById('breedSelect').value;
+      const cards = document.querySelectorAll('.adoption-gallery-card');
+      let hasResults = false;
+
+      cards.forEach(card => {
+        const animalName = card.querySelector('h3').textContent.toLowerCase();
+        const animalBreed = card.querySelector('.animal-breed').textContent.toLowerCase();
+        const animalType = (card.getAttribute('data-type') || '').toLowerCase();
+
+        const matchesSearch = searchInput === '' || animalName.includes(searchInput) || animalBreed.includes(searchInput);
+        const matchesType = !typeFilter || typeFilter === '' || animalType === typeFilter.toLowerCase();
+        const matchesBreed = !breedFilter || breedFilter === '' || animalBreed === breedFilter.toLowerCase();
+
+        if (matchesSearch && matchesType && matchesBreed) {
+          card.style.display = 'grid';
+          hasResults = true;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      // Show "no results" message if needed
+      const grid = document.getElementById('adoptionGrid');
+      let noResults = document.getElementById('noResults');
+
+      if (!hasResults) {
+        if (!noResults) {
+          noResults = document.createElement('div');
+          noResults.id = 'noResults';
+          noResults.style.cssText = 'grid-column: 1 / -1; text-align: center; padding: 40px; color: #777; font-size: 18px;';
+          noResults.textContent = 'No animals found matching your filters.';
+          grid.appendChild(noResults);
+        }
+      } else if (noResults) {
+        noResults.remove();
+      }
+    }
+
+    // Render gallery grid (adds data attributes used by filters)
+    function renderGallery() {
+      const grid = document.getElementById('adoptionGrid');
+      grid.innerHTML = animals.map(animal => `
+        <div class="adoption-gallery-card" data-type="${animal.type}" data-breed="${animal.breed}">
+          <div class="adoption-gallery-image-wrapper">
+            <img src="${animal.image}" alt="${animal.name}" class="adoption-gallery-image" />
+            <div class="adoption-gallery-overlay">
+              <button class="adopt-btn" onclick="openModal(${animal.id})">See Details</button>
+            </div>
+          </div>
+          <div class="adoption-gallery-info">
+            <h3>${animal.name}</h3>
+            <p class="animal-breed">${animal.breed}</p>
+          </div>
+        </div>
+      `).join('');
+
+      // After rendering, ensure breed dropdown reflects current type selection
+      const currentType = document.getElementById('typeSelect') ? document.getElementById('typeSelect').value : '';
+      populateBreedOptions(currentType);
+    }
+
+    // Open modal with animal details
+    function openModal(animalId) {
+      const animal = animals.find(a => a.id === animalId);
+      if (!animal) return;
+
+      const modalContent = document.getElementById('modalContent');
+      modalContent.innerHTML = `
+        <button class="modal-close-btn" onclick="closeModal()">×</button>
+        <div class="animal-details-content">
+          <div class="animal-details-left">
+            <img src="${animal.image}" alt="${animal.name}" class="animal-details-image" onclick="openPreview('${animal.image}')" style="cursor:pointer;" />
+            <div class="animal-gallery">
+              ${animal.galleryImages.map((img, idx) => `
+                <img src="${img}" alt="${animal.name} gallery ${idx + 1}" class="gallery-thumbnail" onclick="openPreview('${img}')" />
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="animal-details-right">
+            <h2>${animal.name}</h2>
+
+            <div class="details-section">
+              <h3>Animal Information</h3>
+              <div class="details-row">
+                <span class="details-label">Animal Type:</span>
+                <span class="details-value">${animal.type}</span>
+              </div>
+              <div class="details-row">
+                <span class="details-label">Age:</span>
+                <span class="details-value">${animal.age}</span>
+              </div>
+              <div class="details-row">
+                <span class="details-label">Sex:</span>
+                <span class="details-value">${animal.sex}</span>
+              </div>
+              <div class="details-row">
+                <span class="details-label">Breed:</span>
+                <span class="details-value">${animal.breed}</span>
+              </div>
+              <div class="details-row">
+                <span class="details-label">Size/Weight:</span>
+                <span class="details-value">${animal.size}</span>
+              </div>
+            </div>
+
+            <div class="details-section">
+              <h3>Health & Behavior</h3>
+              <div class="details-row">
+                <span class="details-label">Health Condition:</span>
+                <span class="details-value">${animal.health}</span>
+              </div>
+              <div class="details-row">
+                <span class="details-label">Behavior Notes:</span>
+                <span class="details-value">${animal.behavior}</span>
+              </div>
+            </div>
+
+            <div class="details-section">
+              <h3>Rescuer/Owner Contact</h3>
+              <div class="details-row">
+                <span class="details-label">Name:</span>
+                <span class="details-value">${animal.rescuerName}</span>
+              </div>
+              <div class="details-row">
+                <span class="details-label">Contact:</span>
+                <span class="details-value">
+                  <a href="mailto:${animal.rescuerContact}">${animal.rescuerContact}</a>
+                </span>
+              </div>
+            </div>
+
+            <div class="modal-actions">
+              <a href="adoption-form.html?animalId=${animal.id}" class="btn btn-custom btn-lg">Adopt</a>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('animalModal').style.display = 'flex';
+    }
+
+    // Close modal
+    function closeModal() {
+      document.getElementById('animalModal').style.display = 'none';
+    }
+
+    // Open image preview
+    function openPreview(imageSrc) {
+      document.getElementById('previewImage').src = imageSrc;
+      document.getElementById('imagePreview').style.display = 'flex';
+    }
+
+    // Close preview
+    function closePreview() {
+      document.getElementById('imagePreview').style.display = 'none';
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('click', function(event) {
+      const modal = document.getElementById('animalModal');
+      const modalContent = document.getElementById('modalContent');
+      
+      if (event.target === modal) {
+        closeModal();
+      }
+    });
+
+    // Close preview when clicking outside
+    document.addEventListener('click', function(event) {
+      const preview = document.getElementById('imagePreview');
+      const previewContainer = document.querySelector('.image-preview-container');
+      
+      if (event.target === preview) {
+        closePreview();
+      }
+    });
+  </script>
+
+  <style>
+    /* Adoption Gallery Grid */
+    .adoption-gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 250px));
+      gap: 30px;
+      padding: 40px 0;
+      justify-content: start;
+    }
+
+    .adoption-gallery-card {
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .adoption-gallery-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .adoption-gallery-image-wrapper {
+      position: relative;
+      overflow: hidden;
+      height: 250px;
+    }
+
+    .adoption-gallery-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .adoption-gallery-card:hover .adoption-gallery-image {
+      transform: scale(1.1);
+    }
+
+    .adoption-gallery-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .adoption-gallery-card:hover .adoption-gallery-overlay {
+      opacity: 1;
+    }
+
+    .adoption-gallery-info {
+      padding: 15px;
+      text-align: center;
+    }
+
+    .adoption-gallery-info h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .animal-breed {
+      color: #9c6644;
+      font-size: 14px;
+      margin: 0;
+    }
+
+    @media (max-width: 768px) {
+      .adoption-gallery-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        padding: 20px 0;
+      }
+
+      .adoption-gallery-image-wrapper {
+        height: 150px;
+      }
+    }
+  </style>
+</body>
+</html>

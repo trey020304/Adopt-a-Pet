@@ -1,0 +1,47 @@
+{
+  "Header": {
+    "title": "Adopt to Help Cats and Dogs in Need!",
+    "paragraph": "With your support, you're not just helping cats and dogs – you're joining a community of passionate, pet-loving individuals who believe in a world where every animal is safe, loved, and valued."
+  },
+  "About": {
+    "paragraph": "Adopt a Pet began with a simple mission: to give every cat and dog a safe place to land when they had nowhere else to go. What started as a small, volunteer-run rescue has grown into a warm, welcoming shelter where animals receive the care, love, and healing they need. Today, we're proud to connect these deserving pets with families ready to offer them a second chance and a forever home.",
+    "Why": "Your generosity makes a real difference. Because of you, we're able to keep providing cats and dogs with the care, comfort, and security they need. By giving, you're not just lending a hand—you're joining a dedicated community that believes every animal deserves to be protected and loved."
+  },
+  "Team": [
+    {
+      "img": "img/team/01.jpg",
+      "name": "Trevor Marcos",
+      "job": "Frontend Developer/Project Manager"
+    },
+    {
+      "img": "img/team/02.jpg",
+      "name": "Ron Del Mundo",
+      "job": "Backend/Fullstack Developer"
+    }
+  ],
+  "Contact": {
+    "address": "4321 California St, San Francisco, CA 12345 ",
+    "phone": "+1 123 456 1234",
+    "email": "info@company.com",
+    "facebook": "fb.com",
+    "twitter": "twitter.com",
+    "youtube": "youtube.com"
+  },
+  "Features": [
+    {
+      "icon": "fa fa-gratipay",
+      "title": "Adopt",
+      "text": "Open your heart and home to a pet in need, offering them love, stability, and a forever family."
+    },
+    {
+      "icon": "fa fa-paw",
+      "title": "Rescue",
+      "text": "Every day, we work to rescue cats and dogs from dangerous environments, getting them the help they urgently need."
+    },
+    {
+      "icon": "fa fa-gift",
+      "title": "Donate",
+      "text": "Your support provides food, shelter, and medical care, giving vulnerable animals a second chance at life."
+    }
+  ]
+}

@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+  <link rel="stylesheet" type="text/css" href="fonts/font-awesome/css/font-awesome.css" />
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
+  <title>Adoption Application</title>
+  <style>
+    /* Page-specific adjustments */
+    .app-container { padding: 80px 20px; max-width: 1100px; margin: 0 auto; }
+    .app-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
+    .animal-summary { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+    .animal-summary img { width: 100%; height: auto; border-radius: 8px; object-fit: cover; }
+    .animal-meta { margin-top: 12px; }
+    .animal-meta h2 { margin: 0 0 6px; }
+    .form-panel { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+    .form-row { display:flex; gap:12px; }
+    .form-actions { display:flex; gap:12px; justify-content:flex-end; margin-top:18px; }
+
+    @media (max-width: 900px) {
+      .app-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Hide other nav items and keep logo */
+    nav#menu .navbar-nav { display: none; }
+    /* Align the decorative brown line for this page's section title to the left edge of content */
+    .form-panel .section-title { text-align: left; }
+    .form-panel .section-title h2::after { left: 0; margin-left: 0; }
+  </style>
+</head>
+<body>
+  <!-- Navigation (logo only) -->
+  <nav id="menu" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand page-scroll">
+          <img src="img/nav-logo.png" alt="logo" class="navbar-logo" /> Adopt a Pet
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container app-container">
+    <div class="app-grid">
+      <aside class="animal-summary" id="animalSummary">
+        <!-- Animal details will be populated here -->
+        <p class="text-muted">Loading animal details…</p>
+      </aside>
+
+      <section class="form-panel">
+        <div class="section-title"><h2>Adoption Application</h2></div>
+        <p>Please complete this form to apply for adoption. Fields marked with * are required.</p>
+
+        <form id="adoptionForm">
+          <fieldset>
+            <legend>Adopter Information</legend>
+
+            <div class="form-group">
+              <label for="fullName">Full name *</label>
+              <input id="fullName" name="fullName" class="form-control" type="text" required />
+            </div>
+
+            <div class="form-row">
+              <div style="flex:1;">
+                <label for="phone">Phone number *</label>
+                <input id="phone" name="phone" class="form-control" type="tel" required />
+              </div>
+              <div style="flex:1;">
+                <label for="email">Email address *</label>
+                <input id="email" name="email" class="form-control" type="email" required />
+              </div>
+            </div>
+
+            <div class="form-group mt-3">
+              <label for="address">Home address *</label>
+              <input id="address" name="address" class="form-control" type="text" required />
+            </div>
+
+            <div class="form-group mt-3">
+              <label for="contactMethod">Preferred contact method *</label>
+              <select id="contactMethod" name="contactMethod" class="form-control" required>
+                <option value="">Select</option>
+                <option value="Email">Email</option>
+                <option value="Phone">Phone</option>
+              </select>
+            </div>
+          </fieldset>
+
+          <fieldset class="mt-4">
+            <legend>Current Pets</legend>
+
+            <div class="form-group">
+              <label>Do you currently have other pets? *</label>
+              <div>
+                <label class="mr-3"><input type="radio" name="havePets" value="Yes" required /> Yes</label>
+                <label><input type="radio" name="havePets" value="No" required /> No</label>
+              </div>
+            </div>
+
+            <div class="form-group mt-3">
+              <label for="vaccinatedStatus">Are current pets vaccinated and spayed/neutered? *</label>
+              <select id="vaccinatedStatus" name="vaccinatedStatus" class="form-control" required>
+                <option value="">Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+                <option value="Not applicable">Not applicable</option>
+              </select>
+            </div>
+          </fieldset>
+
+          <fieldset class="mt-4">
+            <legend>Pet Care & Experience</legend>
+
+            <div class="form-group">
+              <label for="experience">Previous experience with cats/dogs *</label>
+              <select id="experience" name="experience" class="form-control" required>
+                <option value="">Select</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Experienced">Experienced</option>
+              </select>
+            </div>
+
+            <div class="form-group mt-3">
+              <label for="hoursAlone">How many hours per day the pet would be left alone *</label>
+              <input id="hoursAlone" name="hoursAlone" class="form-control" type="number" min="0" required />
+            </div>
+            <div class="form-group mt-3">
+              <label for="dayNight">Where the pet will stay during the day and night *</label>
+              <input id="dayNight" name="dayNight" class="form-control" type="text" required />
+            </div>
+            <div class="form-group mt-3">
+              <label for="energy">Preferred energy level *</label>
+              <select id="energy" name="energy" class="form-control" required>
+                <option value="">Select</option>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+              </select>
+            </div>
+            <div class="form-group mt-3">
+              <label for="reason">Reason for wanting to adopt *</label>
+              <textarea id="reason" name="reason" class="form-control" rows="4" required></textarea>
+            </div>
+          </fieldset>
+
+          <fieldset class="mt-4">
+            <legend>Commitment & Preparedness</legend>
+
+            <div class="form-group">
+              <label for="coverCosts">Ability to cover long-term costs (food, vet care, grooming) *</label>
+              <select id="coverCosts" name="coverCosts" class="form-control" required>
+                <option value="">Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+            <div class="form-group mt-3">
+              <label for="vetCheckups">Willingness to schedule vet checkups and vaccinations *</label>
+              <select id="vetCheckups" name="vetCheckups" class="form-control" required>
+                <option value="">Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+            <div class="form-group mt-3">
+              <label style="display:block;"><input id="agreePolicy" name="agreePolicy" type="checkbox" required /> I agree to the adoption terms & shelter policies *</label>
+            </div>
+          </fieldset>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-default" id="backBtn">Back</button>
+            <button type="button" class="btn btn-default" id="saveDraft">Save Draft</button>
+            <button type="submit" class="btn btn-custom">Submit Application</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <script type="text/javascript">
+    // Minimal animals data copied from adoption.html for left-side summary
+    const animals = [
+      {
+        id: 1,
+        name: "Whiskers",
+        image: "img/sample_adopt/cat 1.jpg",
+        type: "Cat",
+        age: "2 years",
+        sex: "Female",
+        breed: "Tabby Mix",
+        size: "4 lbs"
+      },
+      {
+        id: 2,
+        name: "Shadow",
+        image: "img/sample_adopt/cat 2.jpg",
+        type: "Cat",
+        age: "1 year",
+        sex: "Male",
+        breed: "Black Domestic Shorthair",
+        size: "5 lbs"
+      },
+      {
+        id: 3,
+        name: "Mittens",
+        image: "img/sample_adopt/cat 3.jpg",
+        type: "Cat",
+        age: "3 years",
+        sex: "Female",
+        breed: "British Shorthair",
+        size: "6 lbs"
+      },
+      {
+        id: 4,
+        name: "Max",
+        image: "img/sample_adopt/dog 1.jpg",
+        type: "Dog",
+        age: "3 years",
+        sex: "Male",
+        breed: "Miniature Poodle Mix",
+        size: "55 lbs"
+      },
+      {
+        id: 5,
+        name: "Bella",
+        image: "img/sample_adopt/dog 2.jpg",
+        type: "Dog",
+        age: "2 years",
+        sex: "Female",
+        breed: "Staffordshire Bull Terrier",
+        size: "50 lbs"
+      },
+      {
+        id: 6,
+        name: "Rocky",
+        image: "img/sample_adopt/dog 3.jpg",
+        type: "Dog",
+        age: "4 years",
+        sex: "Male",
+        breed: "Golden Retriever",
+        size: "65 lbs"
+      }
+    ];
+
+    // Helpers
+    function getQueryParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
+
+    function renderAnimalSummary(animalId) {
+      const target = document.getElementById('animalSummary');
+      const id = parseInt(animalId, 10);
+      const animal = animals.find(a => a.id === id) || animals[0];
+
+      target.innerHTML = `
+        <img src="${animal.image}" alt="${animal.name}" />
+        <div class="animal-meta">
+          <h2>${animal.name}</h2>
+          <p><strong>Type:</strong> ${animal.type}</p>
+          <p><strong>Breed:</strong> ${animal.breed}</p>
+          <p><strong>Age:</strong> ${animal.age}</p>
+          <p><strong>Sex:</strong> ${animal.sex}</p>
+          <p><strong>Size:</strong> ${animal.size}</p>
+        </div>
+      `;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const animalId = getQueryParam('animalId');
+      renderAnimalSummary(animalId);
+
+      const form = document.getElementById('adoptionForm');
+      form.addEventListener('submit', function(e) {
+        // Use HTML5 constraint validation API
+        if (!form.checkValidity()) {
+          // Find the first invalid element
+          const firstInvalid = form.querySelector(':invalid');
+          if (firstInvalid) {
+            // Compute navbar height so the field is scrolled into view below it
+            const nav = document.querySelector('nav#menu');
+            const navHeight = nav ? nav.getBoundingClientRect().height : 0;
+            const rect = firstInvalid.getBoundingClientRect();
+            const top = window.pageYOffset + rect.top - navHeight - 20; // 20px breathing room
+
+            // Smooth scroll so the field is visible under the fixed nav
+            window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+
+            // After scrolling, focus and show the browser's validation bubble
+            setTimeout(() => {
+              try { firstInvalid.focus({ preventScroll: true }); } catch (err) { firstInvalid.focus(); }
+              firstInvalid.reportValidity();
+            }, 350);
+          }
+
+          e.preventDefault();
+          return false;
+        }
+
+        e.preventDefault();
+        // For now, just show a confirmation — no server functionality
+        alert('Application submitted (this is a demo — no backend attached).');
+      });
+
+      document.getElementById('backBtn').addEventListener('click', function() {
+        window.history.back();
+      });
+
+      document.getElementById('saveDraft').addEventListener('click', function() {
+        alert('Save draft clicked (no backend implemented).');
+      });
+    });
+  </script>
+</body>
+</html>
