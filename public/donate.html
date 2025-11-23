@@ -17,44 +17,213 @@
   <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,500,600,700,800,900" rel="stylesheet" />
   <title>Donate — Adopt a Pet</title>
+  <style>
+    /* Layout for donation items list */
+    #itemsList { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    .donation-item-row { display: grid; grid-template-columns: 24px 1fr 110px; gap: 10px; align-items: center; }
+    .donation-item-row label { margin: 0; }
+    .donation-item-row input[type="number"] { width: 100%; max-width: 110px; }
+    #otherItemText { width: 100%; }
+    @media (max-width: 700px) {
+      /* keep three columns on small screens but adjust qty width so inputs stay on one row */
+      .donation-item-row { grid-template-columns: 24px 1fr 90px; }
+      .donation-item-row input[type="number"] { justify-self: end; max-width: 90px; }
+    }
+
+    /* Responsive donate layout matching Rescue form style */
+    .donate-container { padding: 80px 20px; max-width: 1000px; margin: 0 auto; }
+    .donate-grid { display: flex; gap: 30px; align-items: flex-start; }
+    .info-panel { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+    .form-panel { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+    .donate-grid .info-panel { flex: 1; max-width: 320px; }
+    .donate-grid .form-panel { flex: 1.2; }
+    @media (max-width: 900px) {
+      .donate-grid { flex-direction: column; }
+      .donate-grid .info-panel, .donate-grid .form-panel { max-width: none; }
+    }
+    /* Align the brown underline with the left edge of the header text */
+    .donate-container .section-title h2 { position: relative; display: inline-block; }
+    .donate-container .section-title h2::after { left: 0; margin-left: 0; transform: none; }
+  </style>
 </head>
 <body>
-  <!-- Navigation -->
+  <!-- Navigation (logo only for focused form) -->
   <nav id="menu" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
       <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand page-scroll" href="index.html">
+        <a class="navbar-brand page-scroll">
           <img src="img/nav-logo.png" alt="logo" class="navbar-logo" /> Adopt a Pet
         </a>
       </div>
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav navbar-right">
-          <li><a href="index.html#features" class="page-scroll">Services</a></li>
-          <li><a href="index.html#about" class="page-scroll">About</a></li>
-          <li><a href="adoption.html" class="page-scroll">Adopt</a></li>
-          <li><a href="index.html#rescue-donate-section" class="page-scroll">Rescue & Donate</a></li>
-          <li><a href="index.html#team" class="page-scroll">Team</a></li>
-          <li><a href="index.html#contact" class="page-scroll">Contact</a></li>
-        </ul>
       </div>
     </div>
   </nav>
+  <main class="donate-container">
+    <div class="donate-grid">
+      <aside class="info-panel">
+        <div class="section-title"><h2>Donate Items</h2></div>
+        <p>Thank you for supporting our rescue. Please fill out the details below so our team can coordinate collection or drop-off.</p>
+        <h4>Drop-off tips</h4>
+        <ul>
+          <li>Label items where possible (e.g., "dog food") and include expiry dates for food/medicine.</li>
+          <li>For pick-up requests, ensure items are safely packed and accessible.</li>
+        </ul>
+      </aside>
 
-  <!-- Page Header -->
-  <header id="header" style="padding-top:120px;">
-    <div class="container text-center" style="padding:80px 0;">
-      <h1 style="font-size:48px; font-weight:700; color:#333;">Donate Page</h1>
-      <p style="max-width:800px; margin:20px auto; color:#333;">This is the donate page. More content coming soon.</p>
+      <section class="form-panel">
+        <div class="section-title"><h2>Donation Form</h2></div>
+        <p>Fields marked with * are required. You will be asked to confirm before finalizing your donation.</p>
+
+        <form id="donationForm" enctype="multipart/form-data">
+          <fieldset>
+            <legend>1. Donor Information</legend>
+            <div class="form-group">
+              <label for="donorName">Full Name *</label>
+              <input id="donorName" name="donorName" class="form-control" type="text" required />
+            </div>
+            <div style="display:flex; gap:12px;">
+              <div style="flex:1;">
+                <label for="donorPhone">Phone Number *</label>
+                <input id="donorPhone" name="donorPhone" class="form-control" type="tel" required />
+              </div>
+              <div style="flex:1;">
+                <label for="donorEmail">Email Address</label>
+                <input id="donorEmail" name="donorEmail" class="form-control" type="email" />
+              </div>
+            </div>
+            <div class="form-group mt-3">
+              <label for="donorContact">Preferred Contact Method *</label>
+              <select id="donorContact" name="donorContact" class="form-control" required>
+                <option value="">Select</option>
+                <option>Call</option>
+                <option>SMS</option>
+                <option>Email</option>
+              </select>
+            </div>
+          </fieldset>
+
+          <fieldset class="mt-4">
+            <legend>2. Donation Items</legend>
+            <p>Select items you wish to donate and enter quantity.</p>
+            <div id="itemsList">
+              <!-- Each item: checkbox + label + quantity -->
+            </div>
+            <div class="donation-item-row" style="margin-top:10px;">
+              <label style="margin:0;"><input type="checkbox" id="otherItemCheck" /> Other</label>
+              <input id="otherItemText" class="form-control" type="text" placeholder="Describe other item" disabled />
+              <input id="otherItemQty" class="form-control" type="number" min="1" placeholder="Qty" disabled />
+            </div>
+          </fieldset>
+
+          <fieldset class="mt-4">
+            <legend>3. Drop-Off / Pick-Up Logistics</legend>
+            <div class="form-group">
+              <label for="donationMethod">Donation Method *</label>
+              <select id="donationMethod" name="donationMethod" class="form-control" required>
+                <option value="">Select</option>
+                <option value="dropoff">Drop-off at shelter</option>
+                <option value="pickup">Request pick-up</option>
+              </select>
+            </div>
+            <div id="pickupFields" style="display:none; margin-top:10px;">
+              <div class="form-group">
+                <label for="pickupAddress">Pickup Address *</label>
+                <input id="pickupAddress" name="pickupAddress" class="form-control" type="text" />
+              </div>
+              <div style="display:flex; gap:12px;">
+                <div style="flex:1;">
+                  <label for="preferredDate">Preferred Date & Time</label>
+                  <input id="preferredDate" name="preferredDate" class="form-control" type="datetime-local" />
+                </div>
+                <div style="flex:1;">
+                  <label for="pickupNotes">Notes for courier or staff</label>
+                  <input id="pickupNotes" name="pickupNotes" class="form-control" type="text" placeholder="Gate info, landmarks, availability" />
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="mt-4">
+            <legend>4. Upload (Optional)</legend>
+            <div class="form-group">
+              <label for="donationPhoto">Upload one photo of the item</label>
+              <input id="donationPhoto" name="donationPhoto" class="form-control" type="file" accept="image/*" />
+              <div id="donationPreview" style="margin-top:10px;"></div>
+            </div>
+          </fieldset>
+
+          <div style="display:flex; gap:12px; justify-content:flex-end; margin-top:14px;">
+            <button type="button" class="btn btn-custom" id="backBtn">Back</button>
+            <button type="submit" class="btn btn-custom">Submit Donation</button>
+          </div>
+        </form>
+      </section>
     </div>
-  </header>
+  </main>
 
   <script type="text/javascript" src="js/jquery.1.11.1.js"></script>
   <script type="text/javascript" src="js/bootstrap.js"></script>
+  <script>
+    // Populate items list
+    const defaultItems = [
+      'Pet Food (Cat)', 'Pet Food (Dog)', 'Bowls', 'Toys', 'Leashes', 'Collars', 'Litter', 'Blankets', 'Bedding', 'Medicine', 'Grooming supplies', 'Crates/Cages', 'Cleaning supplies'
+    ];
+    const itemsList = document.getElementById('itemsList');
+    defaultItems.forEach((it, idx) => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'donation-item-row';
+
+      const cb = document.createElement('input'); cb.type = 'checkbox'; cb.id = 'item_cb_' + idx; cb.name = 'donationItem'; cb.value = it;
+      const lbl = document.createElement('label'); lbl.htmlFor = cb.id; lbl.textContent = it;
+      const qty = document.createElement('input'); qty.type = 'number'; qty.min = '1'; qty.placeholder = 'Qty'; qty.className = 'form-control'; qty.disabled = true; qty.name = 'qty_' + idx;
+
+      cb.addEventListener('change', () => { qty.disabled = !cb.checked; if(!cb.checked) qty.value = ''; });
+
+      wrapper.appendChild(cb);
+      wrapper.appendChild(lbl);
+      wrapper.appendChild(qty);
+      itemsList.appendChild(wrapper);
+    });
+
+    // Other item toggles
+    document.getElementById('otherItemCheck').addEventListener('change', function(e){
+      document.getElementById('otherItemText').disabled = !e.target.checked;
+      document.getElementById('otherItemQty').disabled = !e.target.checked;
+      if(!e.target.checked){ document.getElementById('otherItemText').value=''; document.getElementById('otherItemQty').value=''; }
+    });
+
+    // Donation method toggle
+    document.getElementById('donationMethod').addEventListener('change', function(e){
+      const v = e.target.value;
+      const pickupFields = document.getElementById('pickupFields');
+      if(v === 'pickup') { pickupFields.style.display = 'block'; document.getElementById('pickupAddress').required = true; }
+      else { pickupFields.style.display = 'none'; document.getElementById('pickupAddress').required = false; }
+    });
+
+    // Photo preview
+    document.getElementById('donationPhoto').addEventListener('change', function(e){
+      const file = e.target.files[0];
+      const preview = document.getElementById('donationPreview'); preview.innerHTML = '';
+      if(!file) return;
+      const url = URL.createObjectURL(file);
+      const img = document.createElement('img'); img.src = url; img.style.maxWidth = '100%'; img.style.borderRadius = '8px'; preview.appendChild(img);
+    });
+
+    // Form submit
+    document.getElementById('donationForm').addEventListener('submit', function(e){
+      if(!this.checkValidity()){
+        const firstInvalid = this.querySelector(':invalid');
+        if(firstInvalid){ e.preventDefault(); firstInvalid.scrollIntoView({behavior:'smooth', block:'center'}); firstInvalid.focus(); firstInvalid.reportValidity(); }
+        return false;
+      }
+      e.preventDefault();
+      const confirmFinalize = confirm('Please verify your donation details. Finalize submission?');
+      if(!confirmFinalize) return;
+      alert('Donation submitted. Thank you for your support!');
+      try { window.history.back(); } catch(err){ window.location.href = 'index.html'; }
+    });
+
+    document.getElementById('backBtn').addEventListener('click', function(){ window.history.back(); });
+  </script>
 </body>
 </html>

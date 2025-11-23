@@ -16,45 +16,353 @@
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,500,600,700,800,900" rel="stylesheet" />
-  <title>Rescue — Adopt a Pet</title>
+  <title>Rescue Request — Adopt a Pet</title>
+
+  <style>
+    /* Page-specific layout & small adjustments to match site */
+    .rescue-container { padding: 80px 20px; max-width: 1100px; margin: 0 auto; }
+    .rescue-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
+    .info-panel { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+    .info-panel h4 { margin-top: 0; }
+    .form-panel { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+    .form-row { display:flex; gap:12px; }
+    .form-actions { display:flex; gap:12px; justify-content:flex-end; margin-top:18px; }
+    .upload-preview { margin-top:12px; max-height:220px; }
+
+    /* Improved layout for checkbox groups */
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 14px;
+      align-items: start;
+      margin-top: 6px;
+    }
+    .checkbox-grid label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      background: rgba(0,0,0,0.03);
+      font-size: 14px;
+    }
+    @media (max-width: 600px) {
+      .checkbox-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Ensure labels inside the form-panel do not float (overrides global label float) */
+    .form-panel .form-group > label,
+    .form-panel fieldset > legend,
+    .form-panel .form-row > div > label {
+      float: none !important;
+      display: block !important;
+      margin-bottom: 8px !important;
+    }
+
+    @media (max-width: 900px) {
+      .rescue-grid { grid-template-columns: 1fr; }
+    }
+
+    /* keep logo-only nav for focused form like adoption page */
+    nav#menu .navbar-nav { display: none; }
+    .form-panel .section-title { text-align: left; }
+    .form-panel .section-title h2::after { left: 0; margin-left: 0; }
+    /* Align the brown underline with the left edge of the header text */
+    .rescue-container .section-title h2 { position: relative; display: inline-block; }
+    .rescue-container .section-title h2::after { left: 0; margin-left: 0; transform: none; }
+  </style>
 </head>
 <body>
-  <!-- Navigation -->
+  <!-- Navigation (logo only) -->
   <nav id="menu" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
       <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand page-scroll" href="index.html">
+        <a class="navbar-brand page-scroll">
           <img src="img/nav-logo.png" alt="logo" class="navbar-logo" /> Adopt a Pet
         </a>
-      </div>
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav navbar-right">
-          <li><a href="index.html#features" class="page-scroll">Services</a></li>
-          <li><a href="index.html#about" class="page-scroll">About</a></li>
-          <li><a href="adoption.html" class="page-scroll">Adopt</a></li>
-          <li><a href="index.html#rescue-donate-section" class="page-scroll">Rescue & Donate</a></li>
-          <li><a href="index.html#team" class="page-scroll">Team</a></li>
-          <li><a href="index.html#contact" class="page-scroll">Contact</a></li>
-        </ul>
       </div>
     </div>
   </nav>
 
-  <!-- Page Header -->
-  <header id="header" style="padding-top:120px;">
-    <div class="container text-center" style="padding:80px 0;">
-      <h1 style="font-size:48px; font-weight:700; color:#333;">Rescue Page</h1>
-      <p style="max-width:800px; margin:20px auto; color:#333;">This is the rescue page. More content coming soon.</p>
+  <main class="container rescue-container">
+    <div class="rescue-grid">
+      <aside class="info-panel">
+        <div class="section-title"><h2>Rescue Request</h2></div>
+        <h4>If you found an animal:</h4>
+        <p>Please fill out the details below as best as you can. Add a photo or short video if possible — this helps responders assess urgency.</p>
+        <h4>Tips</h4>
+        <ul>
+          <li>Do not attempt to move an injured animal unless safe to do so.</li>
+          <li>If the animal is aggressive, keep a safe distance and provide location details.</li>
+          <li>For immediate life-threatening cases, call local emergency services first.</li>
+        </ul>
+      </aside>
+
+      <section class="form-panel">
+        <div class="section-title"><h2>Rescue Request Form</h2></div>
+        <p>Fields marked with * are required. You will be asked to confirm before the request is finalized.</p>
+
+        <form id="rescueForm" enctype="multipart/form-data">
+          <fieldset>
+            <legend>1. Reporter Information</legend>
+
+            <div class="form-group">
+              <label for="reporterName">Full Name *</label>
+              <input id="reporterName" name="reporterName" class="form-control" type="text" required />
+            </div>
+
+            <div class="form-row">
+              <div style="flex:1;">
+                <label for="reporterPhone">Phone Number *</label>
+                <input id="reporterPhone" name="reporterPhone" class="form-control" type="tel" required />
+              </div>
+              <div style="flex:1;">
+                <label for="reporterEmail">Email Address</label>
+                <input id="reporterEmail" name="reporterEmail" class="form-control" type="email" />
+              </div>
+            </div>
+
+            <div class="form-row mt-3">
+              <div style="flex:1;">
+                <label for="contactMethod">Preferred Contact Method *</label>
+                <select id="contactMethod" name="contactMethod" class="form-control" required>
+                  <option value="">Select</option>
+                  <option>Call</option>
+                  <option>SMS</option>
+                  <option>Email</option>
+                </select>
+              </div>
+              <div style="flex:1;">
+                <label for="relationship">Relationship to animal *</label>
+                <select id="relationship" name="relationship" class="form-control" required>
+                  <option value="">Select</option>
+                  <option>Owner</option>
+                  <option>Finder</option>
+                  <option>Witness</option>
+                  <option>Stray spotted</option>
+                  <option>Surrendering pet</option>
+                </select>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="mt-4">
+            <legend>2. Animal Information</legend>
+
+            <div class="form-row">
+              <div style="flex:1;">
+                <label for="animalType">Animal Type *</label>
+                <select id="animalType" name="animalType" class="form-control" required>
+                  <option value="">Select</option>
+                  <option>Dog</option>
+                  <option>Cat</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div style="flex:1;">
+                <label for="estimatedAge">Estimated Age</label>
+                <input id="estimatedAge" name="estimatedAge" class="form-control" type="text" placeholder="e.g. 2 yrs or approx" />
+              </div>
+            </div>
+
+            <div class="form-row mt-3">
+              <div style="flex:1;">
+                <label for="size">Size</label>
+                <select id="size" name="size" class="form-control">
+                  <option value="">Select</option>
+                  <option>Small</option>
+                  <option>Medium</option>
+                  <option>Large</option>
+                </select>
+              </div>
+              <div style="flex:1;">
+                <label for="sex">Sex</label>
+                <select id="sex" name="sex" class="form-control">
+                  <option value="">Select</option>
+                  <option>Male</option>
+                  <option>Female</option>
+                  <option>Unknown</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group mt-3">
+              <label for="breed">Breed (if known)</label>
+              <input id="breed" name="breed" class="form-control" type="text" />
+            </div>
+          </fieldset>
+
+          <fieldset class="mt-4">
+            <legend>3. Location Details</legend>
+
+            <div class="form-group">
+              <label for="locationDesc">Exact Location *</label>
+              <input id="locationDesc" name="locationDesc" class="form-control" type="text" placeholder="Address, landmark, or coordinates" required />
+            </div>
+
+            <div class="form-row mt-3">
+              <div>
+                <label>Is the animal still at the location? *</label>
+                <div>
+                  <label class="mr-3"><input type="radio" name="stillThere" value="Yes" required /> Yes&nbsp</label>
+                  <label class="mr-3"><input type="radio" name="stillThere" value="No" required /> No&nbsp</label>
+                  <label><input type="radio" name="stillThere" value="Unsure" required /> Unsure</label>
+                </div>
+              </div>
+              <div style="flex:1;">
+                <label for="access">Safe access to location?</label>
+                <select id="access" name="access" class="form-control">
+                  <option value="">Select</option>
+                  <option>Open area</option>
+                  <option>Inside a building</option>
+                  <option>Roadside</option>
+                  <option>Difficult terrain</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group mt-3">
+              <label for="gpsUpload">GPS pin / screenshot (optional)</label>
+              <input id="gpsUpload" name="gpsUpload" class="form-control" type="file" accept="image/*,.gpx,.kml" />
+            </div>
+          </fieldset>
+
+          <fieldset class="mt-4">
+            <legend>4. Condition & Urgency</legend>
+
+            <div class="form-group">
+              <label>Health Condition (check all that apply) *</label>
+              <div class="checkbox-grid">
+                <label><input type="checkbox" name="health" value="Injured" /> Injured</label>
+                <label><input type="checkbox" name="health" value="Sick" /> Sick</label>
+                <label><input type="checkbox" name="health" value="Malnourished" /> Malnourished</label>
+                <label><input type="checkbox" name="health" value="Weak" /> Weak</label>
+                <label><input type="checkbox" name="health" value="Bleeding" /> Bleeding</label>
+                <label><input type="checkbox" name="health" value="Difficulty walking" /> Difficulty walking</label>
+                <label><input type="checkbox" name="health" value="Trapped" /> Trapped</label>
+                <label><input type="checkbox" name="health" value="Pregnant" /> Pregnant</label>
+                <label><input type="checkbox" name="health" value="In heat" /> In heat</label>
+                <label><input type="checkbox" name="health" value="Possible abuse case" /> Possible abuse case</label>
+                <label><input type="checkbox" name="health" value="Unknown" /> Unknown</label>
+              </div>
+            </div>
+
+            <div class="form-group mt-3">
+              <label>Behavior Condition (check all that apply) *</label>
+              <div class="checkbox-grid">
+                <label><input type="checkbox" name="behavior" value="Friendly" /> Friendly</label>
+                <label><input type="checkbox" name="behavior" value="Scared" /> Scared</label>
+                <label><input type="checkbox" name="behavior" value="Aggressive" /> Aggressive</label>
+                <label><input type="checkbox" name="behavior" value="Cannot move" /> Cannot move</label>
+                <label><input type="checkbox" name="behavior" value="Hiding" /> Hiding</label>
+                <label><input type="checkbox" name="behavior" value="Approaches people" /> Approaches people</label>
+                <label><input type="checkbox" name="behavior" value="Unknown" /> Unknown</label>
+              </div>
+            </div>
+
+            <div class="form-group mt-3">
+              <label>Urgency Level *</label>
+              <div>
+                <label class="d-block"><input type="radio" name="urgency" value="Emergency" required /> Emergency (Life-threatening)&nbsp</label>
+                <label class="d-block"><input type="radio" name="urgency" value="High" required /> High Priority (Injured or unsafe environment)</label>
+                <label class="d-block"><input type="radio" name="urgency" value="Moderate" required /> Moderate (Stray in need of shelter)&nbsp</label>
+                <label class="d-block"><input type="radio" name="urgency" value="Low" required /> Low (Monitoring / Non-urgent rescue)</label>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="mt-4">
+            <legend>5. Evidence Upload (Optional)</legend>
+
+            <div class="form-group">
+              <label for="evidence">Photo or short video</label>
+              <input id="evidence" name="evidence" class="form-control" type="file" accept="image/*,video/*" />
+              <div id="preview" class="upload-preview"></div>
+            </div>
+          </fieldset>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-custom" id="backBtn">Back</button>
+            <button type="submit" class="btn btn-custom">Submit Request</button>
+          </div>
+        </form>
+      </section>
     </div>
-  </header>
+  </main>
 
   <script type="text/javascript" src="js/jquery.1.11.1.js"></script>
   <script type="text/javascript" src="js/bootstrap.js"></script>
+  <script>
+    // Helpers
+    function scrollToElement(el) {
+      const nav = document.querySelector('nav#menu');
+      const navHeight = nav ? nav.getBoundingClientRect().height : 0;
+      const rect = el.getBoundingClientRect();
+      const top = window.pageYOffset + rect.top - navHeight - 20;
+      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('rescueForm');
+      const preview = document.getElementById('preview');
+
+      // File preview for evidence
+      document.getElementById('evidence').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        preview.innerHTML = '';
+        if (!file) return;
+
+        const url = URL.createObjectURL(file);
+        if (file.type.startsWith('image/')) {
+          const img = document.createElement('img');
+          img.src = url;
+          img.style.maxWidth = '100%';
+          img.style.borderRadius = '8px';
+          preview.appendChild(img);
+        } else if (file.type.startsWith('video/')) {
+          const vid = document.createElement('video');
+          vid.src = url;
+          vid.controls = true;
+          vid.style.maxWidth = '100%';
+          vid.style.borderRadius = '8px';
+          preview.appendChild(vid);
+        } else {
+          const p = document.createElement('p');
+          p.textContent = file.name;
+          preview.appendChild(p);
+        }
+      });
+
+      // GPS upload preview not required — keep minimal UX
+
+      form.addEventListener('submit', function(e) {
+        // If invalid, scroll to first invalid control
+        if (!form.checkValidity()) {
+          const firstInvalid = form.querySelector(':invalid');
+          if (firstInvalid) {
+            e.preventDefault();
+            scrollToElement(firstInvalid);
+            setTimeout(() => { try { firstInvalid.focus({ preventScroll: true }); } catch (err) { firstInvalid.focus(); } firstInvalid.reportValidity(); }, 350);
+            return false;
+          }
+        }
+
+        e.preventDefault();
+
+        // Ask user to finalize submission before sending
+        const confirmFinalize = confirm('You are about to finalize this rescue request. Do you want to proceed?');
+        if (!confirmFinalize) {
+          return; // user cancelled
+        }
+
+        // In a real app we would POST the form via fetch/XHR. For this demo, show a success then return to previous page.
+        alert('Rescue request finalized. Thank you — responders will review the information.');
+        // Go back to the last opened page as requested
+        try { window.history.back(); } catch (err) { window.location.href = 'index.html'; }
+      });
+
+      document.getElementById('backBtn').addEventListener('click', function() { window.history.back(); });
+    });
+  </script>
 </body>
 </html>
