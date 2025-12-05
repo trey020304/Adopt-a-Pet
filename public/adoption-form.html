@@ -273,38 +273,6 @@
       const animalId = getQueryParam('animalId');
       renderAnimalSummary(animalId);
 
-      const form = document.getElementById('adoptionForm');
-      form.addEventListener('submit', function(e) {
-        // Use HTML5 constraint validation API
-        if (!form.checkValidity()) {
-          // Find the first invalid element
-          const firstInvalid = form.querySelector(':invalid');
-          if (firstInvalid) {
-            // Compute navbar height so the field is scrolled into view below it
-            const nav = document.querySelector('nav#menu');
-            const navHeight = nav ? nav.getBoundingClientRect().height : 0;
-            const rect = firstInvalid.getBoundingClientRect();
-            const top = window.pageYOffset + rect.top - navHeight - 20; // 20px breathing room
-
-            // Smooth scroll so the field is visible under the fixed nav
-            window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
-
-            // After scrolling, focus and show the browser's validation bubble
-            setTimeout(() => {
-              try { firstInvalid.focus({ preventScroll: true }); } catch (err) { firstInvalid.focus(); }
-              firstInvalid.reportValidity();
-            }, 350);
-          }
-
-          e.preventDefault();
-          return false;
-        }
-
-        e.preventDefault();
-        // For now, just show a confirmation — no server functionality
-        alert('Application submitted (this is a demo — no backend attached).');
-      });
-
       document.getElementById('backBtn').addEventListener('click', function() {
         window.history.back();
       });
@@ -314,5 +282,8 @@
       });
     });
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script type="text/javascript" src="js/supabase-init.js"></script>
+  <script type="text/javascript" src="js/adoption-form-logic.js"></script>
 </body>
 </html>

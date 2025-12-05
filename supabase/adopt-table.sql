@@ -1,0 +1,20 @@
+create table public.adopt (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id),
+  full_name text,
+  phone_number text,
+  email_address text,
+  home_address text,
+  preferred_contact_method text,
+  other_pets boolean,
+  pets_vaccinated_spayed text,
+  experience_with_pets text,
+  hours_pet_left_alone integer,
+  pet_stay_location text,
+  preferred_energy_level text,
+  reason_for_adoption text,
+  can_cover_costs boolean,
+  willing_vet_checkups boolean,
+  agree_terms boolean,
+  created_at timestamp with time zone default now()
+);

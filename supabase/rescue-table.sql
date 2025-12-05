@@ -1,0 +1,22 @@
+create table public.rescue (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id),
+  reporter_full_name text,
+  reporter_phone text,
+  reporter_email text,
+  preferred_contact_method text,
+  relationship_to_animal text,
+  animal_type text,
+  estimated_age text,
+  size text,
+  sex text,
+  breed text,
+  location_details text,
+  animal_still_at_location text,
+  safe_access text,
+  health_condition text[],
+  behavior_condition text[],
+  urgency_level text,
+  evidence_url text,
+  created_at timestamp with time zone default now()
+);

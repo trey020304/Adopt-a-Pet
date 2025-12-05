@@ -27,6 +27,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Registration failed: ' + error.message);
                 console.error(error);
             } else {
+                // Insert user into 'users' table
+                if (data.user) {
+                    await supabase.from('users').insert([
+                        {
+                            id: data.user.id,
+                            email: data.user.email
+                        }
+                    ]);
+                }
                 if (data.user && data.user.aud === 'authenticated') {
                     // Success, with instant login (if email confirmation is OFF)
                     alert('Registration successful! Logging you in...');

@@ -50,11 +50,124 @@
   <header id="header" style="padding-top:120px;">
     <div class="container text-center" style="padding:80px 0;">
       <h1 style="font-size:48px; font-weight:700; color:#333;">Rescue Page</h1>
-      <p style="max-width:800px; margin:20px auto; color:#333;">This is the rescue page. More content coming soon.</p>
+      <form id="rescueForm" style="max-width:800px; margin:20px auto; text-align:left;">
+        <fieldset>
+          <legend>Reporter Information</legend>
+          <label>Full Name*</label>
+          <input name="reporter_full_name" class="form-control" required />
+          <label>Phone Number*</label>
+          <input name="reporter_phone" class="form-control" required />
+          <label>Email Address*</label>
+          <input name="reporter_email" type="email" class="form-control" required />
+          <label>Preferred Contact Method*</label>
+          <select name="preferred_contact_method" class="form-control" required>
+            <option value="">Select</option>
+            <option value="Call">Call</option>
+            <option value="SMS">SMS</option>
+            <option value="Email">Email</option>
+          </select>
+          <label>Relationship to Animal*</label>
+          <select name="relationship_to_animal" class="form-control" required>
+            <option value="">Select</option>
+            <option value="Owner">Owner</option>
+            <option value="Finder">Finder</option>
+            <option value="Witness">Witness</option>
+            <option value="Stray spotted">Stray spotted</option>
+            <option value="Surrendering pet">Surrendering pet</option>
+          </select>
+        </fieldset>
+        <fieldset>
+          <legend>Animal Information</legend>
+          <label>Animal Type*</label>
+          <select name="animal_type" class="form-control" required>
+            <option value="">Select</option>
+            <option value="Dog">Dog</option>
+            <option value="Cat">Cat</option>
+            <option value="Other">Other</option>
+          </select>
+          <label>Estimated Age</label>
+          <input name="estimated_age" class="form-control" />
+          <label>Size</label>
+          <select name="size" class="form-control">
+            <option value="">Select</option>
+            <option value="Small">Small</option>
+            <option value="Medium">Medium</option>
+            <option value="Large">Large</option>
+          </select>
+          <label>Sex</label>
+          <select name="sex" class="form-control">
+            <option value="">Select</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Unknown">Unknown</option>
+          </select>
+          <label>Breed</label>
+          <input name="breed" class="form-control" />
+        </fieldset>
+        <fieldset>
+          <legend>Location Details</legend>
+          <label>Exact Location*</label>
+          <input name="location_details" class="form-control" required />
+          <label>Is the animal still at the location?</label>
+          <select name="animal_still_at_location" class="form-control">
+            <option value="">Select</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+            <option value="Unsure">Unsure</option>
+          </select>
+          <label>Safe access to location?</label>
+          <select name="safe_access" class="form-control">
+            <option value="">Select</option>
+            <option value="Open area">Open area</option>
+            <option value="Inside a building">Inside a building</option>
+            <option value="Roadside">Roadside</option>
+            <option value="Difficult terrain">Difficult terrain</option>
+          </select>
+        </fieldset>
+        <fieldset>
+          <legend>Condition & Urgency</legend>
+          <label>Health Condition (check all that apply)</label><br />
+          <label><input type="checkbox" name="health_condition" value="Injured" /> Injured</label>
+          <label><input type="checkbox" name="health_condition" value="Sick" /> Sick</label>
+          <label><input type="checkbox" name="health_condition" value="Malnourished" /> Malnourished</label>
+          <label><input type="checkbox" name="health_condition" value="Weak" /> Weak</label>
+          <label><input type="checkbox" name="health_condition" value="Bleeding" /> Bleeding</label>
+          <label><input type="checkbox" name="health_condition" value="Difficulty walking" /> Difficulty walking</label>
+          <label><input type="checkbox" name="health_condition" value="Trapped" /> Trapped</label>
+          <label><input type="checkbox" name="health_condition" value="Pregnant" /> Pregnant</label>
+          <label><input type="checkbox" name="health_condition" value="In heat" /> In heat</label>
+          <label><input type="checkbox" name="health_condition" value="Possible abuse case" /> Possible abuse case</label>
+          <label><input type="checkbox" name="health_condition" value="Unknown" /> Unknown</label><br />
+          <label>Behavior Condition (check all that apply)</label><br />
+          <label><input type="checkbox" name="behavior_condition" value="Friendly" /> Friendly</label>
+          <label><input type="checkbox" name="behavior_condition" value="Scared" /> Scared</label>
+          <label><input type="checkbox" name="behavior_condition" value="Aggressive" /> Aggressive</label>
+          <label><input type="checkbox" name="behavior_condition" value="Cannot move" /> Cannot move</label>
+          <label><input type="checkbox" name="behavior_condition" value="Hiding" /> Hiding</label>
+          <label><input type="checkbox" name="behavior_condition" value="Approaches people" /> Approaches people</label>
+          <label><input type="checkbox" name="behavior_condition" value="Unknown" /> Unknown</label><br />
+          <label>Urgency Level*</label>
+          <select name="urgency_level" class="form-control" required>
+            <option value="">Select</option>
+            <option value="Emergency">Emergency</option>
+            <option value="High Priority">High Priority</option>
+            <option value="Moderate">Moderate</option>
+            <option value="Low">Low</option>
+          </select>
+        </fieldset>
+        <fieldset>
+          <legend>Evidence Upload (Optional)</legend>
+          <input type="url" name="evidence_url" class="form-control" placeholder="Photo/Video URL" />
+        </fieldset>
+        <button type="submit" class="btn btn-custom" style="margin-top:20px;">Submit Rescue Request</button>
+      </form>
     </div>
   </header>
 
   <script type="text/javascript" src="js/jquery.1.11.1.js"></script>
   <script type="text/javascript" src="js/bootstrap.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script type="text/javascript" src="js/supabase-init.js"></script>
+  <script type="text/javascript" src="js/rescue-form-logic.js"></script>
 </body>
 </html>

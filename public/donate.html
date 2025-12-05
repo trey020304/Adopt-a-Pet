@@ -50,11 +50,82 @@
   <header id="header" style="padding-top:120px;">
     <div class="container text-center" style="padding:80px 0;">
       <h1 style="font-size:48px; font-weight:700; color:#333;">Donate Page</h1>
-      <p style="max-width:800px; margin:20px auto; color:#333;">This is the donate page. More content coming soon.</p>
+      <form id="donateForm" style="max-width:800px; margin:20px auto; text-align:left;">
+        <fieldset>
+          <legend>Donor Information</legend>
+          <label>Full Name*</label>
+          <input name="donor_full_name" class="form-control" required />
+          <label>Phone Number*</label>
+          <input name="donor_phone" class="form-control" required />
+          <label>Email Address*</label>
+          <input name="donor_email" type="email" class="form-control" required />
+          <label>Preferred Contact Method*</label>
+          <select name="preferred_contact_method" class="form-control" required>
+            <option value="">Select</option>
+            <option value="Call">Call</option>
+            <option value="SMS">SMS</option>
+            <option value="Email">Email</option>
+          </select>
+        </fieldset>
+        <fieldset>
+          <legend>Donation Items</legend>
+          <label>Type of Item*</label>
+          <select name="item_type" class="form-control" required>
+            <option value="">Select</option>
+            <option value="Food">Food</option>
+            <option value="Bowls">Bowls</option>
+            <option value="Toys">Toys</option>
+            <option value="Leashes">Leashes</option>
+            <option value="Collars">Collars</option>
+            <option value="Litter">Litter</option>
+            <option value="Blankets">Blankets</option>
+            <option value="Bedding">Bedding</option>
+            <option value="Medicine">Medicine</option>
+            <option value="Grooming supplies">Grooming supplies</option>
+            <option value="Crates/Cages">Crates/Cages</option>
+            <option value="Cleaning supplies">Cleaning supplies</option>
+            <option value="Other">Other</option>
+          </select>
+          <label>If Other, specify:</label>
+          <input name="item_specific" class="form-control" />
+          <label>Quantity*</label>
+          <input name="quantity" type="number" class="form-control" required />
+          <label>Condition of Items*</label>
+          <select name="item_condition" class="form-control" required>
+            <option value="">Select</option>
+            <option value="New">New</option>
+            <option value="Like-New">Like-New</option>
+            <option value="Gently Used">Gently Used</option>
+          </select>
+        </fieldset>
+        <fieldset>
+          <legend>Drop-Off / Pick-Up Logistics</legend>
+          <label>Donation Method*</label>
+          <select name="donation_method" class="form-control" required>
+            <option value="">Select</option>
+            <option value="Drop-off at shelter">Drop-off at shelter</option>
+            <option value="Request pick-up">Request pick-up</option>
+          </select>
+          <label>Pickup/Drop-off Address</label>
+          <input name="pickup_dropoff_address" class="form-control" />
+          <label>Preferred Date & Time</label>
+          <input name="preferred_date_time" type="datetime-local" class="form-control" />
+          <label>Notes for courier or staff</label>
+          <textarea name="notes" class="form-control"></textarea>
+        </fieldset>
+        <fieldset>
+          <legend>Upload (Optional)</legend>
+          <input type="url" name="evidence_url" class="form-control" placeholder="Photo URL" />
+        </fieldset>
+        <button type="submit" class="btn btn-custom" style="margin-top:20px;">Submit Donation</button>
+      </form>
     </div>
   </header>
 
   <script type="text/javascript" src="js/jquery.1.11.1.js"></script>
   <script type="text/javascript" src="js/bootstrap.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script type="text/javascript" src="js/supabase-init.js"></script>
+  <script type="text/javascript" src="js/donate-form-logic.js"></script>
 </body>
 </html>
