@@ -157,7 +157,10 @@
         </fieldset>
         <fieldset>
           <legend>Evidence Upload (Optional)</legend>
-          <input type="url" name="evidence_url" class="form-control" placeholder="Photo/Video URL" />
+          <label for="evidence">Upload up to 4 photos or videos of the animal (optional)</label>
+          <input id="evidence" type="file" name="evidence" class="form-control" accept="image/*,video/*" multiple />
+          <small style="display:block; margin-top:6px; color:#666;">You can upload up to 4 files (images or short videos).</small>
+          <div id="preview" style="margin-top:10px; display:flex; flex-wrap:wrap; gap:8px;"></div>
         </fieldset>
         <button type="submit" class="btn btn-custom" style="margin-top:20px;">Submit Rescue Request</button>
       </form>
@@ -168,6 +171,7 @@
   <script type="text/javascript" src="js/bootstrap.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script type="text/javascript" src="js/supabase-init.js"></script>
+  <script type="text/javascript" src="js/storage-upload.js"></script>
   <script type="text/javascript" src="js/rescue-form-logic.js"></script>
 </body>
 </html>

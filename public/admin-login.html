@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png" />
+  <link rel="apple-touch-icon" sizes="72x72" href="img/apple-touch-icon-72x72.png" />
+  <link rel="apple-touch-icon" sizes="114x114" href="img/apple-touch-icon-114x114.png" />
+
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+  <link rel="stylesheet" type="text/css" href="fonts/font-awesome/css/font-awesome.css" />
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,500,600,700,800,900" rel="stylesheet" />
+  <title>Admin Login — Adopt a Pet</title>
+  <style>
+    body.admin-login-bg {
+      background: url('img/intro-bg.jpg') center center no-repeat;
+      background-size: cover;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .admin-login-container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 18px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+      max-width: 420px;
+      margin: 120px auto 0 auto;
+      padding: 48px 40px 40px 40px;
+      text-align: center;
+    }
+
+    .admin-login-container h2 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #432818;
+    }
+
+    .admin-login-container .subtitle {
+      font-size: 14px;
+      color: #999;
+      margin-bottom: 30px;
+      font-style: italic;
+    }
+
+    .admin-login-container .form-group {
+      margin-bottom: 22px;
+      text-align: left;
+    }
+
+    .admin-login-container label {
+      font-weight: 600;
+      color: #7f5539;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .admin-login-container input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1.5px solid #b08968;
+      font-size: 16px;
+      margin-bottom: 6px;
+      background: #f6f6f6;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+
+    .admin-login-container input:focus {
+      border-color: #9c6644;
+      outline: none;
+      background: #fff;
+    }
+
+    .admin-login-container .btn-login {
+      width: 100%;
+      padding: 12px 0;
+      background: linear-gradient(to right, #9c6644 0%, #7f5539 100%);
+      color: #fff;
+      font-size: 17px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      margin-top: 10px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .admin-login-container .btn-login:hover {
+      opacity: 0.9;
+    }
+
+    .admin-login-container .btn-login:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .admin-login-container .back-link {
+      margin-top: 24px;
+      display: block;
+      color: #9c6644;
+      font-weight: 500;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .admin-login-container .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .admin-badge {
+      display: inline-block;
+      background: linear-gradient(to right, #9c6644 0%, #7f5539 100%);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+
+    .error-message {
+      background-color: #ffebee;
+      color: #c62828;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 16px;
+      display: none;
+      font-size: 14px;
+      border-left: 4px solid #c62828;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+  </style>
+</head>
+<body class="admin-login-bg">
+  <div class="admin-login-container">
+    <div class="admin-badge">
+      <i class="fa fa-lock"></i> Admin Portal
+    </div>
+    <a class="navbar-brand page-scroll" style="color:#111;font-family:'Juvelo',sans-serif;font-size:24px;font-weight:700;letter-spacing:3px;display:flex;align-items:center;gap:15px;justify-content:center;margin-bottom:18px;">
+      <img src="img/nav-logo.png" alt="logo" class="navbar-logo" style="filter:invert(1);height:40px;width:auto;margin-top:-12.5px;" /> Adopt a Pet
+    </a>
+    <h2>Admin Dashboard</h2>
+    <p class="subtitle">Manage all inquiries and requests</p>
+
+    <div class="error-message" id="errorMessage"></div>
+
+    <form id="admin-login-form">
+      <div class="form-group">
+        <label for="admin-email">
+          <i class="fa fa-envelope"></i> Admin Email
+        </label>
+        <input type="email" id="admin-email" name="admin-email" placeholder="Enter admin email" required />
+      </div>
+      <div class="form-group">
+        <label for="admin-password">
+          <i class="fa fa-lock"></i> Admin Password
+        </label>
+        <input type="password" id="admin-password" name="admin-password" placeholder="Enter admin password" required />
+      </div>
+      <button type="submit" class="btn-login" id="submitBtn">
+        <i class="fa fa-sign-in"></i> Login to Admin
+      </button>
+    </form>
+
+    <a href="index.html" class="back-link">
+      <i class="fa fa-arrow-left"></i> Back to Home
+    </a>
+  </div>
+
+  <script>
+    // Hardcoded admin credentials (CHANGE THESE!)
+    const ADMIN_EMAIL = 'admin@adopapet.com';
+    const ADMIN_PASSWORD = 'SecureAdmin123!';
+
+    document.getElementById('admin-login-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('admin-email').value;
+      const password = document.getElementById('admin-password').value;
+      const errorDiv = document.getElementById('errorMessage');
+      const submitBtn = document.getElementById('submitBtn');
+
+      // Clear previous errors
+      errorDiv.classList.remove('show');
+      errorDiv.textContent = '';
+
+      // Disable button during submission
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Verifying...';
+
+      // Simulate a small delay for security feel
+      setTimeout(() => {
+        if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+          // Store admin session in localStorage
+          localStorage.setItem('adminSession', JSON.stringify({
+            token: btoa(`${email}:${Date.now()}`),
+            email: email,
+            loginTime: new Date().toISOString()
+          }));
+
+          // Redirect to admin dashboard
+          window.location.href = 'admin.html';
+        } else {
+          // Show error
+          errorDiv.textContent = 'Invalid email or password. Please try again.';
+          errorDiv.classList.add('show');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Login to Admin';
+
+          // Clear password field for security
+          document.getElementById('admin-password').value = '';
+        }
+      }, 500);
+    });
+
+    // Check if already logged in, redirect to admin
+    const adminSession = localStorage.getItem('adminSession');
+    if (adminSession) {
+      try {
+        const session = JSON.parse(adminSession);
+        // Check if session is still valid (within 24 hours)
+        const loginTime = new Date(session.loginTime);
+        const now = new Date();
+        const hoursElapsed = (now - loginTime) / (1000 * 60 * 60);
+        
+        if (hoursElapsed < 24) {
+          window.location.href = 'admin.html';
+        } else {
+          localStorage.removeItem('adminSession');
+        }
+      } catch (e) {
+        localStorage.removeItem('adminSession');
+      }
+    }
+  </script>
+</body>
+</html>

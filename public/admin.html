@@ -1,0 +1,1787 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png" />
+  <link rel="apple-touch-icon" sizes="72x72" href="img/apple-touch-icon-72x72.png" />
+  <link rel="apple-touch-icon" sizes="114x114" href="img/apple-touch-icon-114x114.png" />
+
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+  <link rel="stylesheet" type="text/css" href="fonts/font-awesome/css/font-awesome.css" />
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
+  <link rel="stylesheet" type="text/css" href="css/nivo-lightbox/nivo-lightbox.css" />
+  <link rel="stylesheet" type="text/css" href="css/nivo-lightbox/default.css" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,500,600,700,800,900" rel="stylesheet" />
+  <title>Admin Dashboard — Adopt a Pet</title>
+
+  <style>
+    /* Admin Dashboard Styles */
+    body { background-color: #f8f7f5; }
+    
+    .admin-header {
+      background: linear-gradient(135deg, #9c6644 0%, #7f5539 100%);
+      color: #fff;
+      padding: 40px 20px;
+      margin-bottom: 40px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .admin-header h1 {
+      font-size: 36px;
+      font-weight: 700;
+      margin: 0 0 10px 0;
+    }
+
+    .admin-header p {
+      font-size: 16px;
+      margin: 0;
+      opacity: 0.95;
+    }
+
+    .admin-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px 40px 20px;
+    }
+
+    /* Filter Controls */
+    .filter-section {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .filter-section h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .filter-controls {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-btn {
+      padding: 10px 20px;
+      border: 2px solid #ddd;
+      background: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      color: #333;
+    }
+
+    .filter-btn:hover {
+      border-color: #9c6644;
+      color: #9c6644;
+    }
+
+    .filter-btn.active {
+      background: linear-gradient(to right, #9c6644 0%, #7f5539 100%);
+      color: #fff;
+      border-color: #9c6644;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 16px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: #9c6644;
+    }
+
+    /* Table Section */
+    .table-section {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      overflow-x: auto;
+    }
+
+    .table-section h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .inquiry-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .inquiry-table thead {
+      background-color: #f5f3f0;
+      border-bottom: 2px solid #e0ddd9;
+    }
+
+    .inquiry-table th {
+      padding: 16px;
+      text-align: left;
+      font-weight: 600;
+      color: #7f5539;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .inquiry-table td {
+      padding: 16px;
+      border-bottom: 1px solid #f0ede9;
+      color: #555;
+    }
+
+    .inquiry-table tbody tr {
+      transition: background-color 0.2s;
+    }
+
+    .inquiry-table tbody tr:hover {
+      background-color: #fafaf8;
+    }
+
+    .inquiry-type {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .type-adopt {
+      background-color: #d4e8f0;
+      color: #0d5a7f;
+    }
+
+    .type-rescue {
+      background-color: #f0e0d4;
+      color: #7f3d0d;
+    }
+
+    .type-donate {
+      background-color: #e0f0d4;
+      color: #3d7f0d;
+    }
+
+    .urgency-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .urgency-emergency {
+      background-color: #ffcccb;
+      color: #8b0000;
+    }
+
+    .urgency-high {
+      background-color: #ffe4b5;
+      color: #8b4513;
+    }
+
+    .urgency-moderate {
+      background-color: #ffffe0;
+      color: #666600;
+    }
+
+    .urgency-low {
+      background-color: #e0f0d4;
+      color: #3d7f0d;
+    }
+
+    .expand-btn {
+      background: linear-gradient(to right, #9c6644 0%, #7f5539 100%);
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+
+    .expand-btn:hover {
+      opacity: 0.9;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+
+    .empty-state i {
+      font-size: 48px;
+      color: #ddd;
+      margin-bottom: 20px;
+    }
+
+    .empty-state p {
+      font-size: 16px;
+    }
+
+    /* Modal for details */
+    .detail-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 1050;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .detail-modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #fff;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 700px;
+      max-height: 80vh;
+      overflow: auto;
+      padding: 30px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: #9c6644;
+      color: #fff;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 32px;
+    }
+
+    .modal-close:hover {
+      opacity: 0.9;
+    }
+
+    .modal-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .detail-section {
+      margin-bottom: 24px;
+    }
+
+    .detail-section h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #9c6644;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .detail-row {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #f0ede9;
+    }
+
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .detail-label {
+      font-weight: 600;
+      color: #7f5539;
+      min-width: 150px;
+    }
+
+    .detail-value {
+      color: #555;
+      flex: 1;
+    }
+
+    /* Image Gallery Styles */
+    .image-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .gallery-image {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid #e0ddd9;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .gallery-image:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .gallery-image.load-error {
+      background: #f5f3f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: #999;
+    }
+
+    .image-slot { position: relative; }
+    .remove-btn {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      z-index: 5;
+    }
+    .remove-btn:hover { background: rgba(0,0,0,0.8); }
+
+    .no-images {
+      color: #999;
+      font-style: italic;
+      padding: 12px;
+      text-align: center;
+      background: #f5f3f0;
+      border-radius: 8px;
+    }
+
+    /* Image Lightbox */
+    .image-lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.9);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .image-lightbox.active {
+      display: flex;
+    }
+
+    .lightbox-image {
+      max-width: 90%;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #9c6644;
+      color: #fff;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 24px;
+      line-height: 40px;
+    }
+
+    .lightbox-close:hover {
+      opacity: 0.8;
+    }
+
+    .stat-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      text-align: center;
+    }
+
+    .stat-card h4 {
+      font-size: 12px;
+      font-weight: 600;
+      color: #999;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-card .number {
+      font-size: 36px;
+      font-weight: 700;
+      color: #9c6644;
+    }
+
+    @media (max-width: 900px) {
+      .admin-header h1 { font-size: 28px; }
+      .filter-controls { flex-direction: column; align-items: stretch; }
+      .filter-btn { width: 100%; }
+      .search-box { min-width: unset; }
+      .inquiry-table { font-size: 12px; }
+      .inquiry-table th, .inquiry-table td { padding: 12px; }
+      .modal-content { padding: 20px; }
+    }
+
+    @media (max-width: 600px) {
+      .stat-cards { grid-template-columns: 1fr; }
+      .inquiry-table { font-size: 11px; }
+      .inquiry-table th, .inquiry-table td { padding: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <nav id="menu" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand page-scroll" href="index.html">
+          <img src="img/nav-logo.png" alt="logo" class="navbar-logo" /> Adopt a Pet
+        </a>
+      </div>
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="#" id="logoutBtn" style="cursor:pointer;">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Admin Header -->
+  <div class="admin-header">
+    <div class="admin-container">
+      <h1><i class="fa fa-dashboard"></i> Admin Dashboard</h1>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="admin-container">
+    <!-- Stats -->
+    <div class="stat-cards" id="statsContainer">
+      <div class="stat-card">
+        <h4>Total Inquiries</h4>
+        <div class="number" id="totalCount">0</div>
+      </div>
+      <div class="stat-card">
+        <h4>Adoption Applications</h4>
+        <div class="number" id="adoptCount">0</div>
+      </div>
+      <div class="stat-card">
+        <h4>Rescue Requests</h4>
+        <div class="number" id="rescueCount">0</div>
+      </div>
+      <div class="stat-card">
+        <h4>Donation Requests</h4>
+        <div class="number" id="donateCount">0</div>
+      </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+      <h3><i class="fa fa-filter"></i> Filter Inquiries</h3>
+      <div class="filter-controls">
+        <div class="search-box">
+          <input type="text" id="searchInput" placeholder="Search by name, email, or location..." />
+        </div>
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="adopt">Adoption</button>
+        <button class="filter-btn" data-filter="rescue">Rescue</button>
+        <button class="filter-btn" data-filter="donate">Donation</button>
+      </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="table-section">
+      <h3><i class="fa fa-list"></i> All Inquiries</h3>
+      <div id="tableContainer">
+        <div class="empty-state">
+          <i class="fa fa-inbox"></i>
+          <p>No inquiries found</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="detail-modal" id="detailModal">
+    <div class="modal-content" id="modalContent">
+      <button class="modal-close" onclick="closeModal()">×</button>
+      <!-- Content will be inserted here -->
+    </div>
+  </div>
+
+  <!-- Image Lightbox -->
+  <div class="image-lightbox" id="imageLightbox">
+    <button class="lightbox-close" onclick="closeLightbox()">×</button>
+    <img id="lightboxImage" class="lightbox-image" src="" alt="Enlarged view" />
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="text/javascript" src="js/supabase-init.js"></script>
+  <script type="text/javascript" src="js/jquery.1.11.1.js"></script>
+  <script type="text/javascript" src="js/bootstrap.js"></script>
+  <script type="text/javascript" src="js/storage-upload.js"></script>
+
+  <script>
+    let allInquiries = [];
+    let currentFilter = 'all';
+    let searchTerm = '';
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Check if admin session exists
+      const adminSession = localStorage.getItem('adminSession');
+      if (!adminSession) {
+        alert('You must be logged in as admin to access this page.');
+        window.location.href = 'admin-login.html';
+        return;
+      }
+
+      // Verify admin session is still valid (within 24 hours)
+      try {
+        const session = JSON.parse(adminSession);
+        const loginTime = new Date(session.loginTime);
+        const now = new Date();
+        const hoursElapsed = (now - loginTime) / (1000 * 60 * 60);
+        
+        if (hoursElapsed >= 24) {
+          localStorage.removeItem('adminSession');
+          alert('Your admin session has expired. Please log in again.');
+          window.location.href = 'admin-login.html';
+          return;
+        }
+      } catch (e) {
+        localStorage.removeItem('adminSession');
+        window.location.href = 'admin-login.html';
+        return;
+      }
+
+      // Load all inquiries
+      await loadInquiries();
+
+      // Set up event listeners
+      setupFilterButtons();
+      setupSearchInput();
+      document.getElementById('logoutBtn').addEventListener('click', logout);
+    });
+
+    async function loadInquiries() {
+      try {
+        // Fetch from all three tables
+        const [adoptRes, rescueRes, donateRes] = await Promise.all([
+          supabase.from('adopt').select('*'),
+          supabase.from('rescue').select('*'),
+          supabase.from('donate').select('*')
+        ]);
+
+        // Process adopt inquiries
+        const adopts = (adoptRes.data || []).map(item => ({
+          ...item,
+          type: 'adopt',
+          type_label: 'Adoption',
+          name: item.full_name,
+          email: item.email_address,
+          contact: item.phone_number,
+          created: new Date(item.created_at).toLocaleDateString()
+        }));
+
+        // Process rescue inquiries
+        const rescues = (rescueRes.data || []).map(item => ({
+          ...item,
+          type: 'rescue',
+          type_label: 'Rescue',
+          name: item.reporter_full_name,
+          email: item.reporter_email,
+          contact: item.reporter_phone,
+          location: item.location_details,
+          created: new Date(item.created_at).toLocaleDateString(),
+          urgency: item.urgency_level
+        }));
+
+        // Process donate inquiries
+        const donates = (donateRes.data || []).map(item => ({
+          ...item,
+          type: 'donate',
+          type_label: 'Donation',
+          name: item.donor_full_name,
+          email: item.donor_email,
+          contact: item.donor_phone,
+          item: item.item_type,
+          created: new Date(item.created_at).toLocaleDateString()
+        }));
+
+        // Combine all inquiries sorted by creation date
+        allInquiries = [...adopts, ...rescues, ...donates].sort((a, b) => 
+          new Date(b.created_at) - new Date(a.created_at)
+        );
+
+        updateStats();
+        renderTable();
+      } catch (error) {
+        console.error('Error loading inquiries:', error);
+        alert('Error loading inquiries: ' + error.message);
+      }
+    }
+
+    function updateStats() {
+      const total = allInquiries.length;
+      const adoptCount = allInquiries.filter(i => i.type === 'adopt').length;
+      const rescueCount = allInquiries.filter(i => i.type === 'rescue').length;
+      const donateCount = allInquiries.filter(i => i.type === 'donate').length;
+
+      document.getElementById('totalCount').textContent = total;
+      document.getElementById('adoptCount').textContent = adoptCount;
+      document.getElementById('rescueCount').textContent = rescueCount;
+      document.getElementById('donateCount').textContent = donateCount;
+    }
+
+    function setupFilterButtons() {
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          e.target.classList.add('active');
+          currentFilter = e.target.dataset.filter;
+          renderTable();
+        });
+      });
+    }
+
+    function setupSearchInput() {
+      document.getElementById('searchInput').addEventListener('input', (e) => {
+        searchTerm = e.target.value.toLowerCase();
+        renderTable();
+      });
+    }
+
+    function getFilteredInquiries() {
+      let filtered = allInquiries;
+
+      // Apply type filter
+      if (currentFilter !== 'all') {
+        filtered = filtered.filter(i => i.type === currentFilter);
+      }
+
+      // Apply search filter
+      if (searchTerm) {
+        filtered = filtered.filter(i => 
+          i.name.toLowerCase().includes(searchTerm) ||
+          (i.email && i.email.toLowerCase().includes(searchTerm)) ||
+          (i.location && i.location.toLowerCase().includes(searchTerm)) ||
+          (i.contact && i.contact.includes(searchTerm))
+        );
+      }
+
+      return filtered;
+    }
+
+    function renderTable() {
+      const filtered = getFilteredInquiries();
+      const container = document.getElementById('tableContainer');
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fa fa-inbox"></i>
+            <p>No inquiries found</p>
+          </div>
+        `;
+        return;
+      }
+
+      let html = `
+        <table class="inquiry-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Contact</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      filtered.forEach((inquiry, idx) => {
+        const typeClass = `type-${inquiry.type}`;
+        html += `
+          <tr>
+            <td>
+              <span class="inquiry-type ${typeClass}">
+                <i class="fa fa-${inquiry.type === 'adopt' ? 'heart' : inquiry.type === 'rescue' ? 'exclamation-circle' : 'gift'}"></i>
+                ${inquiry.type_label}
+              </span>
+            </td>
+            <td>${inquiry.name}</td>
+            <td>${inquiry.email || '-'}</td>
+            <td>${inquiry.contact || '-'}</td>
+            <td>${inquiry.created}</td>
+            <td>
+              <button class="expand-btn" onclick="viewDetails(${idx})">
+                <i class="fa fa-eye"></i> View
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      html += `
+          </tbody>
+        </table>
+      `;
+
+      container.innerHTML = html;
+    }
+
+    function viewDetails(idx) {
+      const filtered = getFilteredInquiries();
+      const inquiry = filtered[idx];
+
+      // Helper to compute Supabase base URL (tries multiple methods, falls back to hardcoded)
+      function getSupabaseBaseUrl() {
+        try {
+          if (window.supabase && typeof window.supabase.getBaseUrl === 'function') return window.supabase.getBaseUrl();
+          if (window.supabase && window.supabase.rest && window.supabase.rest._url) return window.supabase.rest._url.replace('/rest/v1', '');
+        } catch (e) {
+          // ignore
+        }
+        return 'https://wdocnovzaymlxthbfdnt.supabase.co';
+      }
+
+      let detailsHtml = '';
+
+      if (inquiry.type === 'adopt') {
+        detailsHtml = `
+          <div class="modal-title">
+            <i class="fa fa-heart"></i> Adoption Application
+          </div>
+          <div class="detail-section">
+            <h4>Personal Information</h4>
+            <div class="detail-row"><span class="detail-label">Name:</span><span class="detail-value">${inquiry.full_name}</span></div>
+            <div class="detail-row"><span class="detail-label">Email:</span><span class="detail-value">${inquiry.email_address}</span></div>
+            <div class="detail-row"><span class="detail-label">Phone:</span><span class="detail-value">${inquiry.phone_number}</span></div>
+            <div class="detail-row"><span class="detail-label">Address:</span><span class="detail-value">${inquiry.home_address}</span></div>
+            <div class="detail-row"><span class="detail-label">Contact Method:</span><span class="detail-value">${inquiry.preferred_contact_method}</span></div>
+          </div>
+          <div class="detail-section">
+            <h4>Pet Information</h4>
+            <div class="detail-row"><span class="detail-label">Other Pets:</span><span class="detail-value">${inquiry.other_pets ? 'Yes' : 'No'}</span></div>
+            <div class="detail-row"><span class="detail-label">Vaccination Status:</span><span class="detail-value">${inquiry.pets_vaccinated_spayed}</span></div>
+            <div class="detail-row"><span class="detail-label">Experience:</span><span class="detail-value">${inquiry.experience_with_pets}</span></div>
+            <div class="detail-row"><span class="detail-label">Hours Alone:</span><span class="detail-value">${inquiry.hours_pet_left_alone} hours</span></div>
+            <div class="detail-row"><span class="detail-label">Pet Location:</span><span class="detail-value">${inquiry.pet_stay_location}</span></div>
+            <div class="detail-row"><span class="detail-label">Preferred Energy:</span><span class="detail-value">${inquiry.preferred_energy_level}</span></div>
+          </div>
+          <div class="detail-section">
+            <h4>Application Details</h4>
+            <div class="detail-row"><span class="detail-label">Reason:</span><span class="detail-value">${inquiry.reason_for_adoption}</span></div>
+            <div class="detail-row"><span class="detail-label">Can Cover Costs:</span><span class="detail-value">${inquiry.can_cover_costs ? 'Yes' : 'No'}</span></div>
+            <div class="detail-row"><span class="detail-label">Willing for Checkups:</span><span class="detail-value">${inquiry.willing_vet_checkups ? 'Yes' : 'No'}</span></div>
+            <div class="detail-row"><span class="detail-label">Agreed Terms:</span><span class="detail-value">${inquiry.agree_terms ? 'Yes' : 'No'}</span></div>
+            <div class="detail-row"><span class="detail-label">Submitted:</span><span class="detail-value">${inquiry.created}</span></div>
+          </div>
+          <div style="margin-top:20px;padding-top:20px;border-top:1px solid #e0ddd9;">
+            <button class="expand-btn" id="acceptAdoptBtn-${inquiry.id}" style="background:#2d7f0d;" onclick="acceptAdoptInquiry('${inquiry.id}')">Accept</button>
+          </div>
+        `;
+      } else if (inquiry.type === 'rescue') {
+        const healthList = inquiry.health_condition ? inquiry.health_condition.join(', ') : 'Not specified';
+        const behaviorList = inquiry.behavior_condition ? inquiry.behavior_condition.join(', ') : 'Not specified';
+
+        // Parse evidence URLs and normalize them so admin can view legacy or path-only values
+        let imageGalleryHtml = '';
+        if (inquiry.evidence_url) {
+          try {
+            const rawUrls = JSON.parse(inquiry.evidence_url);
+            const urls = Array.isArray(rawUrls) ? rawUrls : [rawUrls];
+            if (urls && urls.length > 0) {
+              const base = getSupabaseBaseUrl();
+              const bucket = 'animal'; // rescue images stored in 'animal' bucket
+              imageGalleryHtml = '<div class="image-gallery">';
+              urls.forEach((u, idx) => {
+                // create a placeholder slot; we will probe candidate URLs and replace with a working <img>
+                const escaped = encodeURIComponent(u || '');
+                imageGalleryHtml += `<div class="image-slot" data-raw="${escaped}" data-bucket="${bucket}" data-idx="${idx}"><div class="no-images">Checking image...</div></div>`;
+              });
+              imageGalleryHtml += '</div>';
+            }
+          } catch (e) {
+            console.error('Error parsing evidence URLs:', e);
+          }
+        }
+
+        const imagesSection = imageGalleryHtml ? `
+          <div class="detail-section">
+            <h4>Evidence Images</h4>
+            ${imageGalleryHtml}
+          </div>
+        ` : '';
+
+        detailsHtml = `
+          <div class="modal-title">
+            <i class="fa fa-exclamation-circle"></i> Rescue Request
+          </div>
+            <div class="detail-section">
+              <h4>Reporter Information</h4>
+              <div class="detail-row"><span class="detail-label">Name:</span><span class="detail-value">${inquiry.reporter_full_name}</span></div>
+              <div class="detail-row"><span class="detail-label">Email:</span><span class="detail-value">${inquiry.reporter_email}</span></div>
+              <div class="detail-row"><span class="detail-label">Phone:</span><span class="detail-value">${inquiry.reporter_phone}</span></div>
+              <div class="detail-row"><span class="detail-label">Relationship:</span><span class="detail-value">${inquiry.relationship_to_animal}</span></div>
+              <div class="detail-row"><span class="detail-label">Contact Method:</span><span class="detail-value">${inquiry.preferred_contact_method}</span></div>
+            </div>
+            <div class="detail-section">
+              <h4>Animal Information</h4>
+              <div class="detail-row"><span class="detail-label">Type:</span>
+                <span class="detail-value rescue-editable-${inquiry.id}">${inquiry.animal_type || '-'}</span>
+                <input class="detail-input rescue-input-${inquiry.id}" id="input-animal_type-${inquiry.id}" style="display:none" value="${inquiry.animal_type || ''}" />
+              </div>
+              <div class="detail-row"><span class="detail-label">Age:</span>
+                <span class="detail-value rescue-editable-${inquiry.id}">${inquiry.estimated_age || '-'}</span>
+                <input class="detail-input rescue-input-${inquiry.id}" id="input-estimated_age-${inquiry.id}" style="display:none" value="${inquiry.estimated_age || ''}" />
+              </div>
+              <div class="detail-row"><span class="detail-label">Size:</span>
+                <span class="detail-value rescue-editable-${inquiry.id}">${inquiry.size || '-'}</span>
+                <input class="detail-input rescue-input-${inquiry.id}" id="input-size-${inquiry.id}" style="display:none" value="${inquiry.size || ''}" />
+              </div>
+              <div class="detail-row"><span class="detail-label">Sex:</span>
+                <span class="detail-value rescue-editable-${inquiry.id}">${inquiry.sex || '-'}</span>
+                <input class="detail-input rescue-input-${inquiry.id}" id="input-sex-${inquiry.id}" style="display:none" value="${inquiry.sex || ''}" />
+              </div>
+              <div class="detail-row"><span class="detail-label">Breed:</span>
+                <span class="detail-value rescue-editable-${inquiry.id}">${inquiry.breed || '-'}</span>
+                <input class="detail-input rescue-input-${inquiry.id}" id="input-breed-${inquiry.id}" style="display:none" value="${inquiry.breed || ''}" />
+              </div>
+            </div>
+            <div class="detail-section">
+              <h4>Location & Condition</h4>
+              <div class="detail-row"><span class="detail-label">Location:</span>
+                <span class="detail-value rescue-editable-${inquiry.id}">${inquiry.location_details || '-'}</span>
+                <input class="detail-input rescue-input-${inquiry.id}" id="input-location_details-${inquiry.id}" style="display:none" value="${inquiry.location_details || ''}" />
+              </div>
+              <div class="detail-row"><span class="detail-label">Still at Location:</span><span class="detail-value">${inquiry.animal_still_at_location}</span></div>
+              <div class="detail-row"><span class="detail-label">Safe Access:</span><span class="detail-value">${inquiry.safe_access}</span></div>
+              <div class="detail-row"><span class="detail-label">Health:</span>
+                <span class="detail-value rescue-editable-${inquiry.id}">${healthList}</span>
+                <input class="detail-input rescue-input-${inquiry.id}" id="input-health_condition-${inquiry.id}" style="display:none" value="${inquiry.health_condition ? inquiry.health_condition.join(', ') : ''}" />
+              </div>
+              <div class="detail-row"><span class="detail-label">Behavior:</span>
+                <span class="detail-value rescue-editable-${inquiry.id}">${behaviorList}</span>
+                <input class="detail-input rescue-input-${inquiry.id}" id="input-behavior_condition-${inquiry.id}" style="display:none" value="${inquiry.behavior_condition ? inquiry.behavior_condition.join(', ') : ''}" />
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Urgency:</span>
+                <span class="detail-value">
+                  <span class="urgency-badge urgency-${inquiry.urgency_level.toLowerCase()}">
+                    ${inquiry.urgency_level}
+                  </span>
+                </span>
+              </div>
+              <div class="detail-row"><span class="detail-label">Submitted:</span><span class="detail-value">${inquiry.created}</span></div>
+            </div>
+          ${imagesSection}
+          <div style="margin-top:20px;padding-top:20px;border-top:1px solid #e0ddd9;">
+            <button class="expand-btn" id="editRescueBtn-${inquiry.id}" onclick="enableRescueEdit('${inquiry.id}')">Edit</button>
+            <button class="expand-btn" id="saveRescueBtn-${inquiry.id}" style="display:none;background:#3d7f0d;margin-left:8px;" onclick="saveRescueEdits('${inquiry.id}')">Save</button>
+            <button class="expand-btn" id="cancelRescueBtn-${inquiry.id}" style="display:none;background:#999;margin-left:8px;" onclick="cancelRescueEdit('${inquiry.id}')">Cancel</button>
+            <button class="expand-btn" id="acceptRescueBtn-${inquiry.id}" style="background:#2d7f0d;margin-left:8px;" onclick="acceptRescueInquiry('${inquiry.id}')">Accept</button>
+          </div>
+        `;
+      } else if (inquiry.type === 'donate') {
+        // Parse evidence URLs and normalize them for donate items
+        let imageGalleryHtml = '';
+        if (inquiry.evidence_url) {
+          try {
+            const rawUrls = JSON.parse(inquiry.evidence_url);
+            const urls = Array.isArray(rawUrls) ? rawUrls : [rawUrls];
+            if (urls && urls.length > 0) {
+              const base = getSupabaseBaseUrl();
+              const bucket = 'donation'; // donation images are uploaded to 'donation' bucket
+              imageGalleryHtml = '<div class="image-gallery">';
+              urls.forEach((u, idx) => {
+                const escaped = encodeURIComponent(u || '');
+                imageGalleryHtml += `<div class="image-slot" data-raw="${escaped}" data-bucket="${bucket}" data-idx="${idx}"><div class="no-images">Checking image...</div></div>`;
+              });
+              imageGalleryHtml += '</div>';
+            }
+          } catch (e) {
+            console.error('Error parsing evidence URLs:', e);
+          }
+        }
+
+        const imagesSection = imageGalleryHtml ? `
+          <div class="detail-section">
+            <h4>Item Images</h4>
+            ${imageGalleryHtml}
+          </div>
+        ` : '';
+
+        detailsHtml = `
+          <div class="modal-title">
+            <i class="fa fa-gift"></i> Donation Request
+          </div>
+          <div class="detail-section">
+            <h4>Donor Information</h4>
+            <div class="detail-row"><span class="detail-label">Name:</span><span class="detail-value">${inquiry.donor_full_name}</span></div>
+            <div class="detail-row"><span class="detail-label">Email:</span><span class="detail-value">${inquiry.donor_email}</span></div>
+            <div class="detail-row"><span class="detail-label">Phone:</span><span class="detail-value">${inquiry.donor_phone}</span></div>
+            <div class="detail-row"><span class="detail-label">Contact Method:</span><span class="detail-value">${inquiry.preferred_contact_method}</span></div>
+          </div>
+          <div class="detail-section">
+            <h4>Donation Details</h4>
+            <div class="detail-row"><span class="detail-label">Item Type:</span><span class="detail-value">${inquiry.item_type}</span></div>
+            <div class="detail-row"><span class="detail-label">Specific Item:</span><span class="detail-value">${inquiry.item_specific}</span></div>
+            <div class="detail-row"><span class="detail-label">Quantity:</span><span class="detail-value">${inquiry.quantity}</span></div>
+            <div class="detail-row"><span class="detail-label">Condition:</span><span class="detail-value">${inquiry.item_condition}</span></div>
+            <div class="detail-row"><span class="detail-label">Donation Method:</span><span class="detail-value">${inquiry.donation_method}</span></div>
+            <div class="detail-row"><span class="detail-label">Address:</span><span class="detail-value">${inquiry.pickup_dropoff_address}</span></div>
+            <div class="detail-row"><span class="detail-label">Preferred Date:</span><span class="detail-value">${inquiry.preferred_date_time ? new Date(inquiry.preferred_date_time).toLocaleString() : '-'}</span></div>
+            <div class="detail-row"><span class="detail-label">Notes:</span>
+              <span class="detail-value donate-editable-${inquiry.id}">${inquiry.notes || '-'}</span>
+              <input class="detail-input donate-input-${inquiry.id}" id="input-notes-${inquiry.id}" style="display:none;width:100%;padding:6px;border:1px solid #ddd;border-radius:4px;" value="${inquiry.notes || ''}" />
+            </div>
+            <div class="detail-row"><span class="detail-label">Submitted:</span><span class="detail-value">${inquiry.created}</span></div>
+            <div style="margin-top:8px">
+              <button class="expand-btn" id="editDonateBtn-${inquiry.id}" onclick="enableDonateEdit('${inquiry.id}')">Edit Notes</button>
+              <button class="expand-btn" id="saveDonateBtn-${inquiry.id}" style="display:none;background:#3d7f0d;margin-left:8px;" onclick="saveDonateEdits('${inquiry.id}')">Save</button>
+              <button class="expand-btn" id="cancelDonateBtn-${inquiry.id}" style="display:none;background:#999;margin-left:8px;" onclick="cancelDonateEdit('${inquiry.id}')">Cancel</button>
+            </div>
+          </div>
+          ${imagesSection}
+          <div style="margin-top:20px;padding-top:20px;border-top:1px solid #e0ddd9;">
+            <button class="expand-btn" id="acceptDonateBtn-${inquiry.id}" style="background:#2d7f0d;" onclick="acceptDonateInquiry('${inquiry.id}')">Accept</button>
+          </div>
+        `;
+      }
+
+      document.getElementById('modalContent').innerHTML = `
+        <button class="modal-close" onclick="closeModal()">×</button>
+        ${detailsHtml}
+      `;
+
+      // Populate image slots (async): try to find working URLs and replace placeholders
+      populateImageSlots().catch(e => console.warn('populateImageSlots error', e));
+
+      document.getElementById('detailModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('detailModal').classList.remove('active');
+    }
+
+    function openLightbox(imageSrc) {
+      document.getElementById('lightboxImage').src = imageSrc;
+      document.getElementById('imageLightbox').classList.add('active');
+    }
+
+    function closeLightbox() {
+      document.getElementById('imageLightbox').classList.remove('active');
+    }
+
+    // Enable edit mode for a rescue inquiry
+    function enableRescueEdit(id) {
+      const editBtn = document.getElementById(`editRescueBtn-${id}`);
+      const saveBtn = document.getElementById(`saveRescueBtn-${id}`);
+      const cancelBtn = document.getElementById(`cancelRescueBtn-${id}`);
+      const acceptBtn = document.getElementById(`acceptRescueBtn-${id}`);
+      if (editBtn) editBtn.style.display = 'none';
+      if (saveBtn) saveBtn.style.display = 'inline-block';
+      if (cancelBtn) cancelBtn.style.display = 'inline-block';
+      if (acceptBtn) acceptBtn.style.display = 'none';
+      document.querySelectorAll(`.rescue-editable-${id}`).forEach(el => el.style.display = 'none');
+      document.querySelectorAll(`.rescue-input-${id}`).forEach(el => el.style.display = 'inline-block');
+
+      // Enable image editing: add 'Make main' buttons and add-photo input
+      try {
+        const modal = document.getElementById('modalContent');
+        const gallery = modal ? modal.querySelector('.image-gallery') : null;
+        if (gallery) {
+          // add make-main buttons to existing images
+          gallery.querySelectorAll('img.gallery-image').forEach((img) => {
+            if (!img.parentElement.querySelector('.make-main-btn')) {
+              const btn = document.createElement('button');
+              btn.type = 'button';
+              btn.className = 'expand-btn make-main-btn';
+              btn.style.padding = '4px 8px';
+              btn.style.fontSize = '12px';
+              btn.style.marginTop = '6px';
+              btn.textContent = 'Make main';
+              btn.onclick = function(e){
+                e.stopPropagation();
+                moveImageToFront(img);
+              };
+              img.parentElement.appendChild(btn);
+            }
+              // add remove button
+              if (!img.parentElement.querySelector('.remove-btn')) {
+                const r = document.createElement('button');
+                r.type = 'button';
+                r.className = 'remove-btn';
+                r.title = 'Remove image';
+                r.innerHTML = '×';
+                r.onclick = function(e){
+                  e.stopPropagation();
+                  const slot = img.closest('.image-slot') || img.parentElement;
+                  if (slot) slot.remove();
+                };
+                img.parentElement.appendChild(r);
+              }
+          });
+        }
+
+        // add file input control if not present
+        if (modal && !modal.querySelector(`#addPhotos-${id}`)) {
+          const container = document.createElement('div');
+          container.id = `addPhotosContainer-${id}`;
+          container.style.marginTop = '10px';
+          container.innerHTML = `<label style="font-weight:600;color:#9c6644;display:block;margin-bottom:6px">Add Photos (max 4 total)</label>`;
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.id = `addPhotos-${id}`;
+          input.accept = 'image/*';
+          input.multiple = true;
+          input.addEventListener('change', async function(e){
+            await handleAddPhotos(id, e.target.files);
+            e.target.value = '';
+          });
+          container.appendChild(input);
+          // insert after the image gallery (inside the images section if it exists)
+          const gallery = modal.querySelector('.image-gallery');
+          if (gallery && gallery.parentElement) {
+            gallery.parentElement.appendChild(container);
+          } else {
+            modal.appendChild(container);
+          }
+        }
+      } catch (e) {
+        console.warn('enableRescueEdit image UI error', e);
+      }
+    }
+
+    // Cancel edit and restore display values
+    function cancelRescueEdit(id) {
+      const editBtn = document.getElementById(`editRescueBtn-${id}`);
+      const saveBtn = document.getElementById(`saveRescueBtn-${id}`);
+      const cancelBtn = document.getElementById(`cancelRescueBtn-${id}`);
+      const acceptBtn = document.getElementById(`acceptRescueBtn-${id}`);
+      if (editBtn) editBtn.style.display = 'inline-block';
+      if (saveBtn) saveBtn.style.display = 'none';
+      if (cancelBtn) cancelBtn.style.display = 'none';
+      if (acceptBtn) acceptBtn.style.display = 'inline-block';
+      // hide inputs and show display spans
+      document.querySelectorAll(`.rescue-input-${id}`).forEach(el => el.style.display = 'none');
+      document.querySelectorAll(`.rescue-editable-${id}`).forEach(el => el.style.display = 'inline');
+
+      // Restore gallery to the saved state (undo any client-side removals/additions)
+      try {
+        const modal = document.getElementById('modalContent');
+        if (!modal) return;
+        const gallery = modal.querySelector('.image-gallery');
+        // find saved urls from local allInquiries (the authoritative in-memory state)
+        const idx = allInquiries.findIndex(x => x.id === id);
+        let saved = [];
+        if (idx !== -1) {
+          const raw = allInquiries[idx].evidence_url || allInquiries[idx].evidenceUrl || null;
+          try { saved = raw ? (Array.isArray(raw) ? raw : JSON.parse(raw)) : []; } catch(e){ saved = []; }
+        }
+
+        if (!gallery) {
+          if (saved.length === 0) return;
+          const wrap = document.createElement('div');
+          wrap.className = 'image-gallery';
+          modal.appendChild(wrap);
+        }
+
+        const galleryNow = modal.querySelector('.image-gallery');
+        galleryNow.innerHTML = '';
+        if (!saved || saved.length === 0) {
+          const p = document.createElement('div');
+          p.className = 'no-images';
+          p.textContent = 'No images available';
+          galleryNow.appendChild(p);
+        } else {
+          saved.forEach(u => {
+            const slot = document.createElement('div');
+            slot.className = 'image-slot';
+            const img = document.createElement('img');
+            img.className = 'gallery-image';
+            img.src = u;
+            img.alt = 'Evidence image';
+            img.onclick = function(){ openLightbox(this.src); };
+            img.onerror = function(){ this.classList.add('load-error'); this.alt='Image failed to load'; };
+            slot.appendChild(img);
+            galleryNow.appendChild(slot);
+          });
+        }
+      } catch (e) { console.warn('cancelRescueEdit restore gallery error', e); }
+      // remove any add-photos input that was injected during edit
+      try {
+        // prefer removing the container by id
+        const containerId = `addPhotosContainer-${id}`;
+        const container = document.getElementById(containerId);
+        if (container) container.remove();
+
+        // fallback: remove input anywhere in the modal or document
+        const addInput = document.querySelector(`#addPhotos-${id}`);
+        if (addInput) {
+          const cont = addInput.parentElement;
+          if (cont && cont.id && cont.id.startsWith('addPhotosContainer-')) cont.remove();
+          else addInput.remove();
+        }
+      } catch (e) { console.warn('remove addPhotos input error', e); }
+    }
+
+    // Save edits for rescue inquiry
+    async function saveRescueEdits(id) {
+      try {
+        const saveBtn = document.getElementById(`saveRescueBtn-${id}`);
+        if (saveBtn) saveBtn.disabled = true;
+
+        // collect values
+        const animal_type = (document.getElementById(`input-animal_type-${id}`) || {}).value || null;
+        const estimated_age = (document.getElementById(`input-estimated_age-${id}`) || {}).value || null;
+        const size = (document.getElementById(`input-size-${id}`) || {}).value || null;
+        const sex = (document.getElementById(`input-sex-${id}`) || {}).value || null;
+        const breed = (document.getElementById(`input-breed-${id}`) || {}).value || null;
+        const location_details = (document.getElementById(`input-location_details-${id}`) || {}).value || null;
+        const health_raw = (document.getElementById(`input-health_condition-${id}`) || {}).value || '';
+        const behavior_raw = (document.getElementById(`input-behavior_condition-${id}`) || {}).value || '';
+
+        const health_condition = health_raw.split(',').map(s=>s.trim()).filter(Boolean);
+        const behavior_condition = behavior_raw.split(',').map(s=>s.trim()).filter(Boolean);
+
+        // collect current images in gallery (after any reordering)
+        let imageUrls = [];
+        try {
+          const modal = document.getElementById('modalContent');
+          const galleryImgs = modal ? modal.querySelectorAll('.image-gallery img.gallery-image') : [];
+          imageUrls = Array.from(galleryImgs).map(i => i.src).filter(Boolean);
+        } catch (e) { console.warn('collect images error', e); }
+
+        // enforce max 4 images
+        if (imageUrls.length > 4) {
+          alert('A rescue inquiry can have up to 4 images. Please remove some before saving.');
+          if (saveBtn) saveBtn.disabled = false;
+          return;
+        }
+
+        // determine previously stored images for this inquiry so we can detect removals
+        let prevImageUrls = [];
+        try {
+          const idxLocal = allInquiries.findIndex(x => x.id === id);
+          if (idxLocal !== -1) {
+            const rawPrev = allInquiries[idxLocal].evidence_url || allInquiries[idxLocal].evidenceUrl || null;
+            if (rawPrev) prevImageUrls = Array.isArray(rawPrev) ? rawPrev : JSON.parse(rawPrev || '[]');
+          }
+        } catch (e) { console.warn('prev image parse error', e); }
+
+        // Do not allow deleting all images - require at least one
+        if (imageUrls.length === 0) {
+          alert('A rescue inquiry must have at least one image. Please keep or add an image before saving.');
+          if (saveBtn) saveBtn.disabled = false;
+          return;
+        }
+
+        // compute which URLs were removed in this edit session
+        const toDeleteCandidates = (prevImageUrls || []).filter(u => u && !imageUrls.includes(u));
+        if (toDeleteCandidates.length > 0) {
+          const confirmMsg = `You removed ${toDeleteCandidates.length} image(s).\n\n` +
+            `These images will be permanently deleted from storage when you save.\n\n` +
+            `Do you want to continue?`;
+          const confirmed = window.confirm(confirmMsg);
+          if (!confirmed) {
+            // user cancelled deletion — abort save so they can review/undo
+            if (saveBtn) saveBtn.disabled = false;
+            return;
+          }
+        }
+
+        const payload = {
+          animal_type,
+          estimated_age,
+          size,
+          sex,
+          breed,
+          location_details,
+          health_condition,
+          behavior_condition,
+          evidence_url: JSON.stringify(imageUrls)
+        };
+
+        const { error } = await supabase.from('rescue').update(payload).eq('id', id);
+        if (error) {
+          console.error('Update failed', error);
+          alert('Update failed: ' + error.message);
+          if (saveBtn) saveBtn.disabled = false;
+          return;
+        }
+
+        // update modal spans
+        const mappings = ['animal_type','estimated_age','size','sex','breed','location_details'];
+        mappings.forEach(f => {
+          const inputEl = document.getElementById(`input-${f}-${id}`);
+          const displayEl = inputEl ? inputEl.previousElementSibling : null;
+          if (displayEl) displayEl.textContent = inputEl.value || '-';
+        });
+        const healthInput = document.getElementById(`input-health_condition-${id}`);
+        const behaviorInput = document.getElementById(`input-behavior_condition-${id}`);
+        if (healthInput && healthInput.previousElementSibling) healthInput.previousElementSibling.textContent = health_condition.join(', ') || '-';
+        if (behaviorInput && behaviorInput.previousElementSibling) behaviorInput.previousElementSibling.textContent = behavior_condition.join(', ') || '-';
+
+        // hide inputs, show display
+        document.querySelectorAll(`.rescue-input-${id}`).forEach(el => el.style.display = 'none');
+        document.querySelectorAll(`.rescue-editable-${id}`).forEach(el => el.style.display = 'inline');
+        const editBtn = document.getElementById(`editRescueBtn-${id}`);
+        const cancelBtn = document.getElementById(`cancelRescueBtn-${id}`);
+        if (editBtn) editBtn.style.display = 'inline-block';
+        if (saveBtn) saveBtn.style.display = 'none';
+        if (cancelBtn) cancelBtn.style.display = 'none';
+
+        // update local allInquiries and refresh table
+        const idx = allInquiries.findIndex(x => x.id === id);
+        if (idx !== -1) {
+          const ai = allInquiries[idx];
+          ai.animal_type = animal_type;
+          ai.estimated_age = estimated_age;
+          ai.size = size;
+          ai.sex = sex;
+          ai.breed = breed;
+          ai.location_details = location_details;
+          ai.health_condition = health_condition;
+          ai.behavior_condition = behavior_condition;
+          // persist updated images locally so re-opening the modal shows new photos
+          ai.evidence_url = payload.evidence_url;
+          try {
+            const modal = document.getElementById('modalContent');
+            const gallery = modal ? modal.querySelector('.image-gallery') : null;
+            if (gallery) {
+              gallery.innerHTML = '';
+              const imageUrlsNow = JSON.parse(payload.evidence_url || '[]');
+              imageUrlsNow.forEach(u => {
+                const slot = document.createElement('div');
+                slot.className = 'image-slot';
+                const img = document.createElement('img');
+                img.className = 'gallery-image';
+                img.src = u;
+                img.alt = 'Evidence image';
+                img.onclick = function(){ openLightbox(this.src); };
+                img.onerror = function(){ this.classList.add('load-error'); this.alt='Image failed to load'; };
+                slot.appendChild(img);
+                // in edit mode, ensure remove and make-main controls exist
+                if (document.getElementById(`saveRescueBtn-${id}`) && document.getElementById(`saveRescueBtn-${id}`).style.display !== 'none') {
+                  const btn = document.createElement('button');
+                  btn.type = 'button';
+                  btn.className = 'expand-btn make-main-btn';
+                  btn.style.padding = '4px 8px';
+                  btn.style.fontSize = '12px';
+                  btn.style.marginTop = '6px';
+                  btn.textContent = 'Make main';
+                  btn.onclick = function(e){ e.stopPropagation(); moveImageToFront(img); };
+                  slot.appendChild(btn);
+                  const r = document.createElement('button');
+                  r.type = 'button';
+                  r.className = 'remove-btn';
+                  r.title = 'Remove image';
+                  r.innerHTML = '×';
+                  r.onclick = function(e){ e.stopPropagation(); slot.remove(); };
+                  slot.appendChild(r);
+                }
+                gallery.appendChild(slot);
+              });
+            }
+          } catch (e) { console.warn('update local gallery error', e); }
+          renderTable();
+          // delete any removed images from storage (do this after local update)
+          try {
+            const bucket = 'animal';
+            const prev = prevImageUrls || [];
+            const now = imageUrls || [];
+            const toDelete = prev.filter(u => u && !now.includes(u));
+            if (toDelete.length > 0) {
+              const deleteErrors = [];
+              // perform batch remove where possible
+              const paths = toDelete.map(u => getStoragePathFromUrl(u, bucket)).filter(Boolean);
+              if (paths.length > 0) {
+                try {
+                  const { data: delData, error: delErr } = await supabase.storage.from(bucket).remove(paths);
+                  if (delErr) {
+                    console.error('Batch delete failed', delErr);
+                    // fallback to individual deletes
+                    for (const path of paths) {
+                      try {
+                        const { data: d, error: e } = await supabase.storage.from(bucket).remove([path]);
+                        if (e) deleteErrors.push({ path, error: e });
+                      } catch (ex) { deleteErrors.push({ path, error: ex }); }
+                    }
+                  } else {
+                    console.log('Batch deleted from storage:', paths, delData);
+                  }
+                } catch (batchEx) {
+                  console.error('Batch delete exception', batchEx);
+                  for (const path of paths) {
+                    try {
+                      const { data: d, error: e } = await supabase.storage.from(bucket).remove([path]);
+                      if (e) deleteErrors.push({ path, error: e });
+                    } catch (ex) { deleteErrors.push({ path, error: ex }); }
+                  }
+                }
+
+              }
+
+              if (deleteErrors.length) {
+                console.warn('Some storage deletions failed', deleteErrors);
+                alert('Warning: some images could not be deleted from storage. Check console for details.');
+              }
+            }
+          } catch (delE) { console.warn('post-save delete error', delE); }
+        }
+
+        alert('Rescue inquiry updated.');
+      } catch (e) {
+        console.error('saveRescueEdits error', e);
+        alert('Unexpected error: ' + e.message);
+      } finally {
+        const saveBtn = document.getElementById(`saveRescueBtn-${id}`);
+        if (saveBtn) saveBtn.disabled = false;
+      }
+    }
+
+    // Move an image element to the front of its gallery (make main)
+    function moveImageToFront(img) {
+      try {
+        const slot = img.closest('.image-slot') || img.parentElement;
+        const gallery = slot ? slot.parentElement : null;
+        if (!gallery) return;
+        // move slot to beginning
+        gallery.insertBefore(slot, gallery.firstChild);
+      } catch (e) { console.warn('moveImageToFront error', e); }
+    }
+
+    // Handle adding photos in edit mode: upload immediately and append to gallery
+    async function handleAddPhotos(id, fileList) {
+      try {
+        if (!fileList || fileList.length === 0) return;
+        const modal = document.getElementById('modalContent');
+        const gallery = modal.querySelector('.image-gallery');
+        const existing = gallery ? gallery.querySelectorAll('img.gallery-image').length : 0;
+        const totalAllowed = 4;
+        if (existing >= totalAllowed) {
+          alert('Maximum of 4 images already present. Remove one before adding.');
+          return;
+        }
+        const files = Array.from(fileList);
+        // limit files to remaining slots
+        const allowed = files.slice(0, totalAllowed - existing);
+
+        // upload files to 'animal' bucket under 'rescue/evidence'
+        const { urls, errors } = await uploadFilesToSupabase(allowed, 'animal', 'rescue/evidence');
+        if (errors && errors.length > 0) {
+          console.error('Upload errors:', errors);
+          alert('Some uploads failed. See console for details.');
+        }
+        if (urls && urls.length > 0) {
+          // append uploaded images
+          if (!gallery) {
+            // create gallery if missing
+            const imgWrap = document.createElement('div');
+            imgWrap.className = 'image-gallery';
+            modal.appendChild(imgWrap);
+          }
+          const galleryNow = modal.querySelector('.image-gallery');
+          urls.forEach(u => {
+            const slot = document.createElement('div');
+            slot.className = 'image-slot';
+            const img = document.createElement('img');
+            img.className = 'gallery-image';
+            img.src = u;
+            img.alt = 'Uploaded photo';
+            img.onclick = function(){ openLightbox(this.src); };
+            img.onerror = function(){ this.classList.add('load-error'); this.alt='Image failed to load'; };
+            slot.appendChild(img);
+            // add make-main button
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'expand-btn make-main-btn';
+            btn.style.padding = '4px 8px';
+            btn.style.fontSize = '12px';
+            btn.style.marginTop = '6px';
+            btn.textContent = 'Make main';
+            btn.onclick = function(e){ e.stopPropagation(); moveImageToFront(img); };
+            slot.appendChild(btn);
+            // add remove button
+            const r = document.createElement('button');
+            r.type = 'button';
+            r.className = 'remove-btn';
+            r.title = 'Remove image';
+            r.innerHTML = '×';
+            r.onclick = function(e){ e.stopPropagation(); const slot = img.closest('.image-slot') || img.parentElement; if (slot) slot.remove(); };
+            slot.appendChild(r);
+            galleryNow.appendChild(slot);
+          });
+        }
+      } catch (e) {
+        console.error('handleAddPhotos error', e);
+        alert('Upload failed: ' + e.message);
+      }
+    }
+
+    // Probe candidate URLs and return first that responds with an image content-type
+    async function probeImageUrlCandidates(rawValue, bucket, folderCandidates=[]) {
+      const base = (function(){
+        try { if (window.supabase && typeof window.supabase.getBaseUrl === 'function') return window.supabase.getBaseUrl();
+              if (window.supabase && window.supabase.rest && window.supabase.rest._url) return window.supabase.rest._url.replace('/rest/v1','');
+        } catch(e) {}
+        return 'https://wdocnovzaymlxthbfdnt.supabase.co';
+      })();
+
+      const raw = decodeURIComponent(rawValue || '');
+      const candidates = [];
+
+      // If raw already looks like a full URL or contains storage path, include it first
+      if (raw) {
+        if (raw.startsWith('http') || raw.includes('/storage/v1/object')) candidates.push(raw);
+        else candidates.push(`${base}/storage/v1/object/public/${bucket}/${raw}`);
+      }
+
+      // add folder-prefixed candidates
+      for (const f of folderCandidates) {
+        if (!raw) continue;
+        candidates.push(`${base}/storage/v1/object/public/${bucket}/${f}/${raw}`);
+      }
+
+      // also try a direct base + raw (for cases with leading '/c/...')
+      if (raw && raw.startsWith('/')) candidates.push(base + raw);
+
+      // de-duplicate
+      const unique = [...new Set(candidates)];
+
+      for (const url of unique) {
+        try {
+          const resp = await fetch(url, { method: 'HEAD' });
+          if (resp && resp.ok) {
+            const ct = resp.headers.get('content-type') || '';
+            if (ct.startsWith('image/')) return url;
+            // some hosts don't return content-type on HEAD; accept ok
+            return url;
+          }
+        } catch (e) {
+          console.warn('[Admin] probe failed for', url, e);
+        }
+      }
+      return null;
+    }
+
+    // After modal content is inserted, find .image-slot elements and populate images
+    async function populateImageSlots() {
+      const modal = document.getElementById('modalContent');
+      if (!modal) return;
+      const slots = modal.querySelectorAll('.image-slot');
+      if (!slots || slots.length === 0) return;
+
+      for (const slot of Array.from(slots)) {
+        const raw = slot.getAttribute('data-raw');
+        const bucket = slot.getAttribute('data-bucket') || 'animal';
+        // common folder prefixes to try (in order)
+        const folders = ['rescue/evidence', 'donate/photos', 'donate', 'rescue'];
+        const working = await probeImageUrlCandidates(raw, bucket, folders);
+        slot.innerHTML = '';
+        if (working) {
+          const img = document.createElement('img');
+          img.src = working;
+          img.className = 'gallery-image';
+          img.alt = 'Evidence image';
+          img.onclick = function(){ openLightbox(this.src); };
+          img.onerror = function(){ this.classList.add('load-error'); this.alt='Image failed to load'; };
+          slot.appendChild(img);
+        } else {
+          const p = document.createElement('div');
+          p.className = 'no-images';
+          p.textContent = 'Image failed to load';
+          slot.appendChild(p);
+        }
+      }
+    }
+
+    // Extract storage path from a Supabase public URL or stored path
+    function getStoragePathFromUrl(url, bucket) {
+      if (!url) return null;
+      try {
+        // strip querystring
+        const qidx = url.indexOf('?');
+        const clean = qidx !== -1 ? url.substring(0, qidx) : url;
+        // try URL parse
+        const parsed = new URL(clean, window.location.origin);
+        const marker = '/storage/v1/object/public/';
+        const idx = parsed.pathname.indexOf(marker);
+        if (idx !== -1) {
+          let path = parsed.pathname.substring(idx + marker.length);
+          // if path starts with bucket/, remove it so we return the object path
+          if (bucket && path.startsWith(bucket + '/')) path = path.substring(bucket.length + 1);
+          // remove any leading slashes
+          return path.replace(/^\/+/, '');
+        }
+        // Not the full public URL; maybe the value is already the path
+        let p = clean;
+        if (p.startsWith('/')) p = p.substring(1);
+        if (p.startsWith(bucket + '/')) p = p.substring(bucket.length + 1);
+        return p;
+      } catch (e) {
+        // fallback: try naive approaches
+        const qidx = url.indexOf('?');
+        const clean = qidx !== -1 ? url.substring(0, qidx) : url;
+        let p = clean;
+        if (p.startsWith('/')) p = p.substring(1);
+        if (p.startsWith(bucket + '/')) p = p.substring(bucket.length + 1);
+        return p;
+      }
+    }
+
+    async function logout() {
+      localStorage.removeItem('adminSession');
+      window.location.href = 'admin-login.html';
+    }
+
+    // Mark a rescue inquiry as accepted (temporary, UI-only)
+    function acceptRescueInquiry(id) {
+      const btn = document.getElementById(`acceptRescueBtn-${id}`);
+      if (!btn) return;
+
+      try {
+        // find inquiry in allInquiries and mark as accepted
+        const idx = allInquiries.findIndex(x => x.id === id);
+        if (idx !== -1) {
+          allInquiries[idx].accepted = true;
+          allInquiries[idx].accepted_at = new Date().toISOString();
+        }
+
+        // disable button and update text/style
+        btn.disabled = true;
+        btn.style.background = '#999';
+        btn.textContent = '✓ Accepted';
+        btn.title = 'This inquiry has been accepted';
+
+        // show alert
+        alert('Rescue inquiry marked as accepted.');
+      } catch (e) {
+        console.error('acceptRescueInquiry error', e);
+        alert('Error marking inquiry as accepted: ' + e.message);
+      }
+    }
+
+    // Mark an adoption inquiry as accepted (temporary, UI-only)
+    function acceptAdoptInquiry(id) {
+      const btn = document.getElementById(`acceptAdoptBtn-${id}`);
+      if (!btn) return;
+
+      try {
+        // find inquiry in allInquiries and mark as accepted
+        const idx = allInquiries.findIndex(x => x.id === id);
+        if (idx !== -1) {
+          allInquiries[idx].accepted = true;
+          allInquiries[idx].accepted_at = new Date().toISOString();
+        }
+
+        // disable button and update text/style
+        btn.disabled = true;
+        btn.style.background = '#999';
+        btn.textContent = '✓ Accepted';
+        btn.title = 'This inquiry has been accepted';
+
+        // show alert
+        alert('Adoption inquiry marked as accepted.');
+      } catch (e) {
+        console.error('acceptAdoptInquiry error', e);
+        alert('Error marking inquiry as accepted: ' + e.message);
+      }
+    }
+
+    // Mark a donation inquiry as accepted (temporary, UI-only)
+    function acceptDonateInquiry(id) {
+      const btn = document.getElementById(`acceptDonateBtn-${id}`);
+      if (!btn) return;
+
+      try {
+        // find inquiry in allInquiries and mark as accepted
+        const idx = allInquiries.findIndex(x => x.id === id);
+        if (idx !== -1) {
+          allInquiries[idx].accepted = true;
+          allInquiries[idx].accepted_at = new Date().toISOString();
+        }
+
+        // disable button and update text/style
+        btn.disabled = true;
+        btn.style.background = '#999';
+        btn.textContent = '✓ Accepted';
+        btn.title = 'This inquiry has been accepted';
+
+        // show alert
+        alert('Donation inquiry marked as accepted.');
+      } catch (e) {
+        console.error('acceptDonateInquiry error', e);
+        alert('Error marking inquiry as accepted: ' + e.message);
+      }
+    }
+
+    // Enable edit mode for donation notes
+    function enableDonateEdit(id) {
+      const editBtn = document.getElementById(`editDonateBtn-${id}`);
+      const saveBtn = document.getElementById(`saveDonateBtn-${id}`);
+      const cancelBtn = document.getElementById(`cancelDonateBtn-${id}`);
+      if (editBtn) editBtn.style.display = 'none';
+      if (saveBtn) saveBtn.style.display = 'inline-block';
+      if (cancelBtn) cancelBtn.style.display = 'inline-block';
+      document.querySelectorAll(`.donate-input-${id}`).forEach(el => el.style.display = 'inline-block');
+      document.querySelectorAll(`.donate-editable-${id}`).forEach(el => el.style.display = 'none');
+    }
+
+    // Cancel edit and restore display values for donation
+    function cancelDonateEdit(id) {
+      const editBtn = document.getElementById(`editDonateBtn-${id}`);
+      const saveBtn = document.getElementById(`saveDonateBtn-${id}`);
+      const cancelBtn = document.getElementById(`cancelDonateBtn-${id}`);
+      if (editBtn) editBtn.style.display = 'inline-block';
+      if (saveBtn) saveBtn.style.display = 'none';
+      if (cancelBtn) cancelBtn.style.display = 'none';
+      document.querySelectorAll(`.donate-input-${id}`).forEach(el => el.style.display = 'none');
+      document.querySelectorAll(`.donate-editable-${id}`).forEach(el => el.style.display = 'inline');
+    }
+
+    // Save edits for donation inquiry
+    async function saveDonateEdits(id) {
+      try {
+        const saveBtn = document.getElementById(`saveDonateBtn-${id}`);
+        if (saveBtn) saveBtn.disabled = true;
+
+        const notes = (document.getElementById(`input-notes-${id}`) || {}).value || null;
+
+        const payload = { notes };
+
+        const { error } = await supabase.from('donate').update(payload).eq('id', id);
+        if (error) {
+          console.error('Update failed', error);
+          alert('Update failed: ' + error.message);
+          if (saveBtn) saveBtn.disabled = false;
+          return;
+        }
+
+        // update modal spans
+        const inputEl = document.getElementById(`input-notes-${id}`);
+        const displayEl = inputEl ? inputEl.previousElementSibling : null;
+        if (displayEl) displayEl.textContent = inputEl.value || '-';
+
+        // hide inputs, show display
+        document.querySelectorAll(`.donate-input-${id}`).forEach(el => el.style.display = 'none');
+        document.querySelectorAll(`.donate-editable-${id}`).forEach(el => el.style.display = 'inline');
+        const editBtn = document.getElementById(`editDonateBtn-${id}`);
+        const cancelBtn = document.getElementById(`cancelDonateBtn-${id}`);
+        if (editBtn) editBtn.style.display = 'inline-block';
+        if (saveBtn) saveBtn.style.display = 'none';
+        if (cancelBtn) cancelBtn.style.display = 'none';
+
+        // update local allInquiries
+        const idx = allInquiries.findIndex(x => x.id === id);
+        if (idx !== -1) {
+          allInquiries[idx].notes = notes;
+          renderTable();
+        }
+
+        alert('Donation inquiry updated.');
+      } catch (e) {
+        console.error('saveDonateEdits error', e);
+        alert('Unexpected error: ' + e.message);
+      } finally {
+        const saveBtn = document.getElementById(`saveDonateBtn-${id}`);
+        if (saveBtn) saveBtn.disabled = false;
+      }
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('detailModal').addEventListener('click', (e) => {
+      if (e.target.id === 'detailModal') {
+        closeModal();
+      }
+    });
+
+    // Close lightbox when clicking outside
+    document.getElementById('imageLightbox').addEventListener('click', (e) => {
+      if (e.target.id === 'imageLightbox') {
+        closeLightbox();
+      }
+    });
+  </script>
+</body>
+</html>

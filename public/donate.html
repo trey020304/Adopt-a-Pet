@@ -114,8 +114,11 @@
           <textarea name="notes" class="form-control"></textarea>
         </fieldset>
         <fieldset>
-          <legend>Upload (Optional)</legend>
-          <input type="url" name="evidence_url" class="form-control" placeholder="Photo URL" />
+          <legend>Upload Photo (Optional)</legend>
+          <label for="donationPhoto">Upload up to 4 photos of the donation items (optional)</label>
+          <input id="donationPhoto" type="file" name="donation_photo" class="form-control" accept="image/*" multiple />
+          <small style="display:block; margin-top:6px; color:#666;">You can upload up to 4 images. Large files may take longer to upload.</small>
+          <div id="donationPreview" style="margin-top:10px; display:flex; flex-wrap:wrap; gap:8px;"></div>
         </fieldset>
         <button type="submit" class="btn btn-custom" style="margin-top:20px;">Submit Donation</button>
       </form>
@@ -126,6 +129,7 @@
   <script type="text/javascript" src="js/bootstrap.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script type="text/javascript" src="js/supabase-init.js"></script>
+  <script type="text/javascript" src="js/storage-upload.js"></script>
   <script type="text/javascript" src="js/donate-form-logic.js"></script>
 </body>
 </html>

@@ -4,6 +4,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     const form = document.getElementById('donateForm');
     if (!form) return;
 
+        // Handle file preview (supports multiple, max 4)
+        const photoInput = form.querySelector('input[name="donation_photo"]');
+        if (photoInput) {
+            photoInput.addEventListener('change', (e) => {
+                const files = e.target.files;
+                if (files.length > 4) {
+                    alert('Please select up to 4 images only.');
+                    e.target.value = '';
+                    document.getElementById('donationPreview').innerHTML = '';
+                    return;
+                }
+                previewFile(files, 'donationPreview');
+            });
+        }
+
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
         if (!form.checkValidity()) {
@@ -17,6 +32,30 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert('You must be logged in to submit a donation.');
             window.location.href = 'login.html';
             return;
+        }
+
+        // Debug: log current session user id
+        try {
+            console.log('[DonateForm] session.user.id ->', session.user.id);
+        } catch (e) {
+            console.warn('[DonateForm] no session.user.id available', e);
+        }
+
+        // Upload photos if provided (up to 4)
+        let photoUrls = [];
+        if (photoInput && photoInput.files.length > 0) {
+            if (photoInput.files.length > 4) {
+                alert('Please select up to 4 images only.');
+                return;
+            }
+            const { urls, errors } = await uploadFilesToSupabase(photoInput.files, 'donation', 'donate/photos');
+            if (errors && errors.length > 0) {
+                console.error('Upload errors:', errors);
+                const msgs = errors.map(e => `${e.file}: ${e.error}`).join('\n');
+                alert('Upload failed:\n' + msgs);
+                return;
+            }
+            photoUrls = urls;
         }
 
         // Gather form data
@@ -34,7 +73,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             pickup_dropoff_address: form.pickup_dropoff_address.value,
             preferred_date_time: form.preferred_date_time.value,
             notes: form.notes.value,
-            evidence_url: form.evidence_url.value,
+            evidence_url: JSON.stringify(photoUrls),
             created_at: new Date().toISOString()
         };
 
@@ -43,9 +82,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
+        // Debug: show payload just before insert
+        console.log('[DonateForm] inserting donation row', { user_id: data.user_id, evidence_url: data.evidence_url, created_at: data.created_at });
+
         // Insert into Supabase
         const { error } = await supabase.from('donate').insert([data]);
         if (error) {
+            console.error('[DonateForm] insert error ->', error);
             alert('Submission failed: ' + error.message);
             return;
         }

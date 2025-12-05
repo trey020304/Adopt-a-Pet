@@ -119,6 +119,69 @@ hr {
   margin: 9px 20px 0;
   position: relative;
 }
+
+/* Account display in navbar (email + logout) */
+.nav-account {
+  font-family: "Red Hat Display", sans-serif;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 400;
+  padding: 8px 2px;
+  margin: 9px 20px 0;
+}
+.nav-account .nav-account-email {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffffff;
+}
+.nav-account .nav-account-logout {
+  display: inline-block;
+  color: #ffffff;
+  font-size: 12px;
+  text-decoration: none;
+  padding: 0;
+}
+.nav-account .nav-account-logout:hover,
+.nav-account .nav-account-logout:focus,
+.nav-account button.nav-account-logout:hover,
+.nav-account button.nav-account-logout:focus {
+  text-decoration: underline;
+}
+
+/* Keep logout visually below the email without growing navbar height */
+.nav-account {
+  position: relative;
+  display: inline-block;
+  min-height: 30px; /* slightly smaller so layout is tighter */
+  padding: 0 2px; /* small horizontal spacing; vertical spacing handled by nav */
+}
+.nav-account .nav-account-email {
+  line-height: 1;
+}
+.nav-account .nav-account-logout,
+.nav-account button.nav-account-logout {
+  position: absolute;
+  left: 0;
+  top: 20px; /* tightened to sit closer under the email */
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Mobile: revert to normal flow so logout doesn't overlap other elements */
+@media (max-width: 767px) {
+  .nav-account {
+    min-height: auto;
+  }
+  .nav-account .nav-account-logout {
+    position: static;
+    margin-top: 4px;
+  }
+}
 #menu.navbar-default .navbar-nav > li > a:after {
   display: block;
   position: absolute;
