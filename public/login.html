@@ -98,7 +98,7 @@
       <img src="img/nav-logo.png" alt="logo" class="navbar-logo" style="filter:invert(1);height:40px;width:auto;margin-top:-12.5px;" /> Adopt a Pet
     </a>
     <h3>Login</h3>
-    <form onsubmit="event.preventDefault(); window.location.href='index.html';">
+    <form id="login-form">
       <div class="form-group">
         <label for="username">Email</label>
         <input type="text" id="username" name="username" placeholder="Enter your email" required />
@@ -111,6 +111,10 @@
     </form>
     <a href="register.html" class="register-link">Don't have an account? Register</a>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="text/javascript" src="js/supabase-init.js"></script>
+  <script type="text/javascript" src="js/login-logic.js"></script>
 
   <script type="text/javascript" src="js/jquery.1.11.1.js"></script>
   <script type="text/javascript" src="js/bootstrap.js"></script>
