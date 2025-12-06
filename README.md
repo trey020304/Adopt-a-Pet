@@ -175,5 +175,5 @@ src/
 
 ## 👥 Proponents
 
-* **Del Mundo, Ron Gabriel B.**
-* **Marcos, Mark Wilhelm Trevor K.**
+* **Del Mundo, Ron Gabriel B. (https://github.com/Ronnieee1)**
+* **Marcos, Mark Wilhelm Trevor K. (https://github.com/trey020304)**
