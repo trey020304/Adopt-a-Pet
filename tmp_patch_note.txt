@@ -1,0 +1,1 @@
+Temporary: patch applied to hide scroll arrows when animals.length <= 4 and add guard in scrollContainer.

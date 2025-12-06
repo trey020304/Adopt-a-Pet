@@ -58,6 +58,58 @@ document.addEventListener('DOMContentLoaded', async () => {
             photoUrls = urls;
         }
 
+        // Collect all selected donation items
+        const items = [];
+        
+        // Map of item names for the form
+        const itemNames = {
+            'item_pet_food_cat': 'Pet Food (Cat)',
+            'item_pet_food_dog': 'Pet Food (Dog)',
+            'item_bowls': 'Bowls',
+            'item_toys': 'Toys',
+            'item_leashes': 'Leashes',
+            'item_collars': 'Collars',
+            'item_litter': 'Litter',
+            'item_blankets': 'Blankets',
+            'item_bedding': 'Bedding',
+            'item_medicine': 'Medicine',
+            'item_grooming': 'Grooming supplies',
+            'item_crates': 'Crates/Cages',
+            'item_cleaning': 'Cleaning supplies'
+        };
+
+        // Collect items from checkboxes
+        for (const [fieldName, displayName] of Object.entries(itemNames)) {
+            const checkbox = form.querySelector(`input[name="${fieldName}"]`);
+            const qtyFieldName = fieldName.replace('item_', 'qty_');
+            const qtyInput = form.querySelector(`input[name="${qtyFieldName}"]`);
+            
+            if (checkbox && checkbox.checked && qtyInput && qtyInput.value) {
+                items.push({
+                    name: displayName,
+                    quantity: parseInt(qtyInput.value, 10)
+                });
+            }
+        }
+
+        // Check for "Other" item
+        const otherCheckbox = form.querySelector('input[name="item_other_check"]');
+        const otherDesc = form.querySelector('input[name="item_other"]');
+        const otherQty = form.querySelector('input[name="qty_other"]');
+        if (otherCheckbox && otherCheckbox.checked && otherDesc && otherDesc.value && otherQty && otherQty.value) {
+            items.push({
+                name: 'Other',
+                description: otherDesc.value,
+                quantity: parseInt(otherQty.value, 10)
+            });
+        }
+
+        // Validate that at least one item was selected
+        if (items.length === 0) {
+            alert('Please select at least one item to donate.');
+            return;
+        }
+
         // Gather form data
         const data = {
             user_id: session.user.id,
@@ -65,10 +117,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             donor_phone: form.donor_phone.value,
             donor_email: form.donor_email.value,
             preferred_contact_method: form.preferred_contact_method.value,
-            item_type: form.item_type.value,
-            item_specific: form.item_specific.value,
-            quantity: parseInt(form.quantity.value, 10),
-            item_condition: form.item_condition.value,
+            items: items, // New: array of items with quantities
             donation_method: form.donation_method.value,
             pickup_dropoff_address: form.pickup_dropoff_address.value,
             preferred_date_time: form.preferred_date_time.value,
@@ -83,7 +132,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // Debug: show payload just before insert
-        console.log('[DonateForm] inserting donation row', { user_id: data.user_id, evidence_url: data.evidence_url, created_at: data.created_at });
+        console.log('[DonateForm] inserting donation row', { user_id: data.user_id, items: data.items, evidence_url: data.evidence_url, created_at: data.created_at });
 
         // Insert into Supabase
         const { error } = await supabase.from('donate').insert([data]);

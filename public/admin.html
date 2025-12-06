@@ -680,18 +680,31 @@
         }));
 
         // Process donate inquiries
-        const donates = (donateRes.data || []).map(item => ({
-          ...item,
-          type: 'donate',
-          type_label: 'Donation',
-          name: item.donor_full_name,
-          email: item.donor_email,
-          contact: item.donor_phone,
-          item: item.item_type,
-          created: new Date(item.created_at).toLocaleDateString(),
-          accepted: item.accepted || false,
-          accepted_at: item.accepted_at
-        }));
+        const donates = (donateRes.data || []).map(item => {
+          // Handle both new format (items array) and old format (item_type, etc.)
+          let itemSummary = '-';
+          if (item.items && Array.isArray(item.items) && item.items.length > 0) {
+            // New format: show count and types
+            const itemNames = item.items.map(i => i.name).join(', ');
+            itemSummary = `${item.items.length} item${item.items.length !== 1 ? 's' : ''}: ${itemNames}`;
+          } else if (item.item_type_old || item.item_specific_old) {
+            // Old format: fall back to archived columns
+            itemSummary = item.item_specific_old || item.item_type_old || '-';
+          }
+          
+          return {
+            ...item,
+            type: 'donate',
+            type_label: 'Donation',
+            name: item.donor_full_name,
+            email: item.donor_email,
+            contact: item.donor_phone,
+            item: itemSummary,
+            created: new Date(item.created_at).toLocaleDateString(),
+            accepted: item.accepted || false,
+            accepted_at: item.accepted_at
+          };
+        });
 
         // Combine all inquiries sorted by creation date
         allInquiries = [...adopts, ...rescues, ...donates].sort((a, b) => 
@@ -944,6 +957,10 @@
             </div>
             <div class="detail-section">
               <h4>Animal Information</h4>
+              <div class="detail-row"><span class="detail-label">Animal Name:</span>
+                <span class="detail-value rescue-editable-${inquiry.id}">${inquiry.animal_name || '-'}</span>
+                <input class="detail-input rescue-input-${inquiry.id}" id="input-animal_name-${inquiry.id}" style="display:none" value="${inquiry.animal_name || ''}" />
+              </div>
               <div class="detail-row"><span class="detail-label">Type:</span>
                 <span class="detail-value rescue-editable-${inquiry.id}">${inquiry.animal_type || '-'}</span>
                 <input class="detail-input rescue-input-${inquiry.id}" id="input-animal_type-${inquiry.id}" style="display:none" value="${inquiry.animal_type || ''}" />
@@ -1041,10 +1058,32 @@
           </div>
           <div class="detail-section">
             <h4>Donation Details</h4>
-            <div class="detail-row"><span class="detail-label">Item Type:</span><span class="detail-value">${inquiry.item_type}</span></div>
-            <div class="detail-row"><span class="detail-label">Specific Item:</span><span class="detail-value">${inquiry.item_specific}</span></div>
-            <div class="detail-row"><span class="detail-label">Quantity:</span><span class="detail-value">${inquiry.quantity}</span></div>
-            <div class="detail-row"><span class="detail-label">Condition:</span><span class="detail-value">${inquiry.item_condition}</span></div>
+            ${(() => {
+              // Handle new format (items array)
+              if (inquiry.items && Array.isArray(inquiry.items) && inquiry.items.length > 0) {
+                return `
+                  <div class="detail-row">
+                    <span class="detail-label">Items Donated:</span>
+                    <span class="detail-value">
+                      <ul style="margin: 8px 0; padding-left: 20px;">
+                        ${inquiry.items.map(item => `
+                          <li>${item.name}${item.description ? ` (${item.description})` : ''} - Qty: ${item.quantity}</li>
+                        `).join('')}
+                      </ul>
+                    </span>
+                  </div>
+                `;
+              } else if (inquiry.item_type_old || inquiry.item_specific_old) {
+                // Handle old format (archived columns)
+                return `
+                  <div class="detail-row"><span class="detail-label">Item Type:</span><span class="detail-value">${inquiry.item_type_old || '-'}</span></div>
+                  <div class="detail-row"><span class="detail-label">Specific Item:</span><span class="detail-value">${inquiry.item_specific_old || '-'}</span></div>
+                  <div class="detail-row"><span class="detail-label">Quantity:</span><span class="detail-value">${inquiry.quantity_old || '-'}</span></div>
+                `;
+              } else {
+                return `<div class="detail-row"><span class="detail-label">Items:</span><span class="detail-value">No items data available</span></div>`;
+              }
+            })()}
             <div class="detail-row"><span class="detail-label">Donation Method:</span><span class="detail-value">${inquiry.donation_method}</span></div>
             <div class="detail-row"><span class="detail-label">Address:</span><span class="detail-value">${inquiry.pickup_dropoff_address}</span></div>
             <div class="detail-row"><span class="detail-label">Preferred Date:</span><span class="detail-value">${inquiry.preferred_date_time ? new Date(inquiry.preferred_date_time).toLocaleString() : '-'}</span></div>
@@ -1312,6 +1351,7 @@
         if (saveBtn) saveBtn.disabled = true;
 
         // collect values
+        const animal_name = (document.getElementById(`input-animal_name-${id}`) || {}).value || null;
         const animal_type = (document.getElementById(`input-animal_type-${id}`) || {}).value || null;
         const estimated_age = (document.getElementById(`input-estimated_age-${id}`) || {}).value || null;
         const size = (document.getElementById(`input-size-${id}`) || {}).value || null;
@@ -1371,6 +1411,7 @@
         }
 
         const payload = {
+          animal_name,
           animal_type,
           estimated_age,
           size,
@@ -1391,7 +1432,7 @@
         }
 
         // update modal spans
-        const mappings = ['animal_type','estimated_age','size','sex','breed','location_details'];
+        const mappings = ['animal_name','animal_type','estimated_age','size','sex','breed','location_details'];
         mappings.forEach(f => {
           const inputEl = document.getElementById(`input-${f}-${id}`);
           const displayEl = inputEl ? inputEl.previousElementSibling : null;
@@ -1415,6 +1456,7 @@
         const idx = allInquiries.findIndex(x => x.id === id);
         if (idx !== -1) {
           const ai = allInquiries[idx];
+          ai.animal_name = animal_name;
           ai.animal_type = animal_type;
           ai.estimated_age = estimated_age;
           ai.size = size;
@@ -1720,6 +1762,23 @@
       const btn = document.getElementById(`acceptRescueBtn-${id}`);
       if (!btn) return;
 
+      // Get the animal name from the editable field
+      const animalNameInput = document.getElementById(`input-animal_name-${id}`);
+      const animalNameSpan = document.querySelector(`.detail-value.rescue-editable-${id}`);
+      
+      let animalName = '';
+      if (animalNameInput && animalNameInput.style.display !== 'none') {
+        animalName = animalNameInput.value.trim();
+      } else if (animalNameSpan) {
+        animalName = animalNameSpan.textContent.trim();
+        if (animalName === '-') animalName = '';
+      }
+
+      if (!animalName) {
+        alert('Please enter an animal name in the "Animal Name" field before accepting.');
+        return;
+      }
+
       // confirmation
       const confirmMsg = 'Are you sure you want to ACCEPT this rescue request?\n\n' +
         'This will publish the animal to the adoption listings and cannot be fully undone via the admin UI.';
@@ -1750,7 +1809,7 @@
         const main_image = (gallery && gallery.length) ? gallery[0] : (inquiry.main_image || null);
 
         const animalRow = {
-          name: inquiry.animal_name || inquiry.name || (inquiry.reporter_full_name ? (`Rescue from ${inquiry.reporter_full_name}`) : 'Rescued Animal'),
+          name: animalName,
           type: inquiry.animal_type || inquiry.type || null,
           age: inquiry.estimated_age || inquiry.age || null,
           sex: inquiry.sex || null,
@@ -1804,7 +1863,7 @@
         btn.textContent = '✓ Accepted';
         btn.title = 'This inquiry has been accepted';
 
-        alert('Rescue accepted and published to adoption listings.');
+        alert('Rescue accepted and published to adoption listings as: ' + animalName);
 
         // close modal and refresh table
         closeModal();
@@ -1839,6 +1898,7 @@
         }
 
         const inquiry = allInquiries[idx];
+        console.log('Accepting adoption inquiry:', inquiry);
         
         // Mark inquiry as accepted in the adopt table
         const { data: updateData, error: updateError } = await supabase.from('adopt').update({ 
@@ -1858,14 +1918,37 @@
 
         // Mark the animal as unavailable (instead of deleting it, which would cascade delete the adoption inquiry)
         if (inquiry.animal_id) {
+          console.log('Marking animal as unavailable:', inquiry.animal_id);
+          
+          // First, verify the animal exists
+          const { data: animalCheck, error: checkError } = await supabase.from('animals').select('id, available').eq('id', inquiry.animal_id);
+          if (checkError) {
+            console.warn('Error checking animal:', checkError);
+          } else {
+            console.log('Animal found:', animalCheck);
+          }
+          
+          // Update the animal without .select() to avoid RLS issues
           const { error } = await supabase.from('animals').update({ 
             available: false 
           }).eq('id', inquiry.animal_id);
+          
           if (error) {
             console.warn('Could not mark animal as unavailable:', error);
+            alert('Warning: Adoption approved but animal could not be marked as unavailable. Check console for details.');
           } else {
-            console.log('Animal marked as unavailable');
+            console.log('Animal marked as unavailable successfully');
+            // Verify the update by re-reading the animal
+            const { data: verifyData, error: verifyError } = await supabase.from('animals').select('id, available').eq('id', inquiry.animal_id);
+            if (verifyError) {
+              console.warn('Error verifying animal status:', verifyError);
+            } else {
+              console.log('Animal availability status after update:', verifyData);
+            }
           }
+        } else {
+          console.warn('No animal_id found in inquiry:', inquiry);
+          alert('Warning: No animal ID associated with this adoption inquiry.');
         }
 
         // Update local state
@@ -2043,3 +2126,4 @@
   </script>
 </body>
 </html>
+

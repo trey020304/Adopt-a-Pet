@@ -1,128 +1,68 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export const Adoption = (props) => {
   const [selectedAnimal, setSelectedAnimal] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
 
-  const animals = [
-    {
-      id: 1,
-      name: "Whiskers",
-      image: "img/sample_adopt/cat 1.jpg",
-      galleryImages: [
-        "img/sample_adopt/cat 1.jpg",
-        "img/sample_adopt/cat 1.jpg",
-        "img/sample_adopt/cat 1.jpg",
-      ],
-      type: "Cat",
-      age: "2 years",
-      sex: "Female",
-      breed: "Tabby Mix",
-      size: "4 lbs",
-      health: "Healthy, up-to-date on vaccinations",
-      behavior: "Friendly, playful, good with children",
-      rescuerName: "Jane Smith",
-      rescuerContact: "jane@petrescue.com",
-    },
-    {
-      id: 2,
-      name: "Shadow",
-      image: "img/sample_adopt/cat 2.jpg",
-      galleryImages: [
-        "img/sample_adopt/cat 2.jpg",
-        "img/sample_adopt/cat 2.jpg",
-        "img/sample_adopt/cat 2.jpg",
-      ],
-      type: "Cat",
-      age: "1 year",
-      sex: "Male",
-      breed: "Black Domestic Shorthair",
-      size: "5 lbs",
-      health: "Healthy, neutered",
-      behavior: "Shy but warming up, needs patient home",
-      rescuerName: "John Doe",
-      rescuerContact: "john@petrescue.com",
-    },
-    {
-      id: 3,
-      name: "Mittens",
-      image: "img/sample_adopt/cat 3.jpg",
-      galleryImages: [
-        "img/sample_adopt/cat 3.jpg",
-        "img/sample_adopt/cat 3.jpg",
-        "img/sample_adopt/cat 3.jpg",
-      ],
-      type: "Cat",
-      age: "3 years",
-      sex: "Female",
-      breed: "British Shorthair",
-      size: "6 lbs",
-      health: "Healthy, spayed",
-      behavior: "Affectionate, loves attention",
-      rescuerName: "Sarah Johnson",
-      rescuerContact: "sarah@petrescue.com",
-    },
-    {
-      id: 4,
-      name: "Max",
-      image: "img/sample_adopt/dog 1.jpg",
-      galleryImages: [
-        "img/sample_adopt/dog 1.jpg",
-        "img/sample_adopt/dog 1.jpg",
-        "img/sample_adopt/dog 1.jpg",
-      ],
-      type: "Dog",
-      age: "3 years",
-      sex: "Male",
-      breed: "Miniature Poodle Mix",
-      size: "55 lbs",
-      health: "Healthy, neutered, vaccinated",
-      behavior: "Friendly, energetic, good with families",
-      rescuerName: "Mike Wilson",
-      rescuerContact: "mike@petrescue.com",
-    },
-    {
-      id: 5,
-      name: "Bella",
-      image: "img/sample_adopt/dog 2.jpg",
-      galleryImages: [
-        "img/sample_adopt/dog 2.jpg",
-        "img/sample_adopt/dog 2.jpg",
-        "img/sample_adopt/dog 2.jpg",
-      ],
-      type: "Dog",
-      age: "2 years",
-      sex: "Female",
-      breed: "Staffordshire Bull Terrier",
-      size: "50 lbs",
-      health: "Healthy, minor hip dysplasia (manageable)",
-      behavior: "Gentle, loves walks, good with other dogs",
-      rescuerName: "Emily Brown",
-      rescuerContact: "emily@petrescue.com",
-    },
-    {
-      id: 6,
-      name: "Rocky",
-      image: "img/sample_adopt/dog 3.jpg",
-      galleryImages: [
-        "img/sample_adopt/dog 3.jpg",
-        "img/sample_adopt/dog 3.jpg",
-        "img/sample_adopt/dog 3.jpg",
-      ],
-      type: "Dog",
-      age: "4 years",
-      sex: "Male",
-      breed: "Golden Retriever",
-      size: "65 lbs",
-      health: "Healthy, fully vaccinated",
-      behavior: "Protective, loyal, needs experienced handler",
-      rescuerName: "Tom Martinez",
-      rescuerContact: "tom@petrescue.com",
-    },
-  ];
+  const [animals, setAnimals] = useState([]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadAnimals() {
+      try {
+        // Prefer the global client initialized in `public/js/supabase-init.js`.
+        const client = (typeof window !== 'undefined' && window.supabase) ? window.supabase : null;
+        if (!client) {
+          // No Supabase client available in global scope — leave empty or implement a fallback if desired.
+          setAnimals([]);
+          return;
+        }
+
+        const { data, error } = await client
+          .from('animals')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Failed to load animals:', error);
+          if (mounted) setAnimals([]);
+          return;
+        }
+
+        const mapped = (data || [])
+          .filter(r => r.available !== false)
+          .map(r => ({
+            id: r.id,
+            name: r.name,
+            type: r.type,
+            age: r.age,
+            sex: r.sex,
+            breed: r.breed,
+            size: r.size,
+            health: r.health,
+            behavior: r.behavior,
+            rescuerName: r.rescuer_name,
+            rescuerContact: r.rescuer_contact,
+            image: r.main_image || (r.gallery && r.gallery[0]) || 'img/sample_adopt/cat 1.jpg',
+            galleryImages: r.gallery || []
+          }));
+
+        if (mounted) setAnimals(mapped);
+      } catch (e) {
+        console.error('Error loading animals from Supabase', e);
+        if (mounted) setAnimals([]);
+      }
+    }
+
+    loadAnimals();
+
+    return () => { mounted = false; };
+  }, []);
 
   const scrollContainer = (direction) => {
     const container = document.querySelector(".adoption-carousel");
+    if (!container) return; // safety: no-op if DOM not present yet
     const scrollAmount = 300;
     if (direction === "left") {
       container.scrollBy({ left: -scrollAmount, behavior: "smooth" });
@@ -143,12 +83,14 @@ export const Adoption = (props) => {
         </div>
 
         <div className="adoption-container">
-          <button
-            className="scroll-btn scroll-btn-left"
-            onClick={() => scrollContainer("left")}
-          >
-            &#10094;
-          </button>
+          {animals.length > 4 && (
+            <button
+              className="scroll-btn scroll-btn-left"
+              onClick={() => scrollContainer("left")}
+            >
+              &#10094;
+            </button>
+          )}
 
           <div className="adoption-carousel">
             {animals.map((animal) => (
@@ -172,12 +114,14 @@ export const Adoption = (props) => {
             ))}
           </div>
 
-          <button
-            className="scroll-btn scroll-btn-right"
-            onClick={() => scrollContainer("right")}
-          >
-            &#10095;
-          </button>
+          {animals.length > 4 && (
+            <button
+              className="scroll-btn scroll-btn-right"
+              onClick={() => scrollContainer("right")}
+            >
+              &#10095;
+            </button>
+          )}
         </div>
 
         <div className="text-center adoption-footer">
