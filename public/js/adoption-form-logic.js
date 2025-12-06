@@ -20,8 +20,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // Gather form data
+        const animalId = new URLSearchParams(window.location.search).get('animalId');
         const data = {
             user_id: session.user.id,
+            animal_id: animalId || null,
             full_name: form.fullName.value,
             phone_number: form.phone.value,
             email_address: form.email.value,

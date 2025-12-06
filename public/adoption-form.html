@@ -181,92 +181,50 @@
   </main>
 
   <script type="text/javascript">
-    // Minimal animals data copied from adoption.html for left-side summary
-    const animals = [
-      {
-        id: 1,
-        name: "Whiskers",
-        image: "img/sample_adopt/cat 1.jpg",
-        type: "Cat",
-        age: "2 years",
-        sex: "Female",
-        breed: "Tabby Mix",
-        size: "4 lbs"
-      },
-      {
-        id: 2,
-        name: "Shadow",
-        image: "img/sample_adopt/cat 2.jpg",
-        type: "Cat",
-        age: "1 year",
-        sex: "Male",
-        breed: "Black Domestic Shorthair",
-        size: "5 lbs"
-      },
-      {
-        id: 3,
-        name: "Mittens",
-        image: "img/sample_adopt/cat 3.jpg",
-        type: "Cat",
-        age: "3 years",
-        sex: "Female",
-        breed: "British Shorthair",
-        size: "6 lbs"
-      },
-      {
-        id: 4,
-        name: "Max",
-        image: "img/sample_adopt/dog 1.jpg",
-        type: "Dog",
-        age: "3 years",
-        sex: "Male",
-        breed: "Miniature Poodle Mix",
-        size: "55 lbs"
-      },
-      {
-        id: 5,
-        name: "Bella",
-        image: "img/sample_adopt/dog 2.jpg",
-        type: "Dog",
-        age: "2 years",
-        sex: "Female",
-        breed: "Staffordshire Bull Terrier",
-        size: "50 lbs"
-      },
-      {
-        id: 6,
-        name: "Rocky",
-        image: "img/sample_adopt/dog 3.jpg",
-        type: "Dog",
-        age: "4 years",
-        sex: "Male",
-        breed: "Golden Retriever",
-        size: "65 lbs"
-      }
-    ];
-
     // Helpers
     function getQueryParam(name) {
       const params = new URLSearchParams(window.location.search);
       return params.get(name);
     }
 
-    function renderAnimalSummary(animalId) {
+    async function renderAnimalSummary(animalId) {
       const target = document.getElementById('animalSummary');
-      const id = parseInt(animalId, 10);
-      const animal = animals.find(a => a.id === id) || animals[0];
+      
+      if (!animalId) {
+        target.innerHTML = '<p class="text-muted">No animal selected.</p>';
+        return;
+      }
 
-      target.innerHTML = `
-        <img src="${animal.image}" alt="${animal.name}" />
-        <div class="animal-meta">
-          <h2>${animal.name}</h2>
-          <p><strong>Type:</strong> ${animal.type}</p>
-          <p><strong>Breed:</strong> ${animal.breed}</p>
-          <p><strong>Age:</strong> ${animal.age}</p>
-          <p><strong>Sex:</strong> ${animal.sex}</p>
-          <p><strong>Size:</strong> ${animal.size}</p>
-        </div>
-      `;
+      try {
+        const { data, error } = await supabase.from('animals').select('*').eq('id', animalId).single();
+        
+        if (error || !data) {
+          target.innerHTML = '<p class="text-muted">Animal not found.</p>';
+          return;
+        }
+
+        const animal = data;
+        const mainImageUrl = animal.main_image || (animal.gallery && animal.gallery[0]) || 'img/sample_adopt/cat 1.jpg';
+        const animalType = animal.type || 'Unknown';
+        const breed = animal.breed || 'Unknown';
+        const age = animal.age || 'Unknown';
+        const sex = animal.sex || 'Unknown';
+        const size = animal.size || 'Unknown';
+        const name = animal.name || 'Unknown';
+
+        target.innerHTML = '<img src="' + mainImageUrl + '" alt="' + name + '" />' +
+          '<div class="animal-meta">' +
+          '<h2>' + name + '</h2>' +
+          '<p><strong>Type:</strong> ' + animalType + '</p>' +
+          '<p><strong>Breed:</strong> ' + breed + '</p>' +
+          '<p><strong>Age:</strong> ' + age + '</p>' +
+          '<p><strong>Sex:</strong> ' + sex + '</p>' +
+          '<p><strong>Size:</strong> ' + size + '</p>' +
+          '</div>';
+      } catch (e) {
+        console.error('Error loading animal:', e);
+        target.innerHTML = '<p class="text-muted">Error loading animal details.</p>';
+      }
     }
 
     document.addEventListener('DOMContentLoaded', function() {

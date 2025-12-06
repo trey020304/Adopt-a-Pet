@@ -6,4 +6,17 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 // scripts (static pages and React) can access the client via the global.
 // Note: use `window.supabase = window.supabase.createClient(...)` instead of
 // `const supabase = ...` so the client is available globally.
-window.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+try {
+	window.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+	// Basic runtime checks for debugging
+	console.log('[supabase-init] SUPABASE_URL present?', !!SUPABASE_URL);
+	console.log('[supabase-init] SUPABASE_KEY present?', !!SUPABASE_KEY);
+	// expose a small helper to inspect that the client is set
+	window.__supabase_debug = {
+		url: SUPABASE_URL,
+		hasKey: !!SUPABASE_KEY,
+		client: window.supabase
+	};
+} catch (e) {
+	console.error('[supabase-init] failed to initialize supabase client', e);
+}

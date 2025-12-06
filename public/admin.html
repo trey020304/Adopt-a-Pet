@@ -560,12 +560,15 @@
         <button class="filter-btn" data-filter="adopt">Adoption</button>
         <button class="filter-btn" data-filter="rescue">Rescue</button>
         <button class="filter-btn" data-filter="donate">Donation</button>
+        <button class="filter-btn" data-filter="archive" style="margin-left: auto; background: #666;">
+          <i class="fa fa-archive"></i> Archive
+        </button>
       </div>
     </div>
 
     <!-- Table Section -->
     <div class="table-section">
-      <h3><i class="fa fa-list"></i> All Inquiries</h3>
+      <h3><i class="fa fa-list"></i> <span id="tableTitle">All Inquiries</span></h3>
       <div id="tableContainer">
         <div class="empty-state">
           <i class="fa fa-inbox"></i>
@@ -656,7 +659,9 @@
           name: item.full_name,
           email: item.email_address,
           contact: item.phone_number,
-          created: new Date(item.created_at).toLocaleDateString()
+          created: new Date(item.created_at).toLocaleDateString(),
+          accepted: item.accepted || false,
+          accepted_at: item.accepted_at
         }));
 
         // Process rescue inquiries
@@ -669,7 +674,9 @@
           contact: item.reporter_phone,
           location: item.location_details,
           created: new Date(item.created_at).toLocaleDateString(),
-          urgency: item.urgency_level
+          urgency: item.urgency_level,
+          accepted: item.accepted || false,
+          accepted_at: item.accepted_at
         }));
 
         // Process donate inquiries
@@ -681,7 +688,9 @@
           email: item.donor_email,
           contact: item.donor_phone,
           item: item.item_type,
-          created: new Date(item.created_at).toLocaleDateString()
+          created: new Date(item.created_at).toLocaleDateString(),
+          accepted: item.accepted || false,
+          accepted_at: item.accepted_at
         }));
 
         // Combine all inquiries sorted by creation date
@@ -730,9 +739,17 @@
     function getFilteredInquiries() {
       let filtered = allInquiries;
 
-      // Apply type filter
-      if (currentFilter !== 'all') {
-        filtered = filtered.filter(i => i.type === currentFilter);
+      // Apply archive filter
+      if (currentFilter === 'archive') {
+        filtered = filtered.filter(i => i.accepted === true);
+      } else {
+        // Show only non-archived inquiries for other filters
+        filtered = filtered.filter(i => i.accepted !== true);
+        
+        // Apply type filter
+        if (currentFilter !== 'all') {
+          filtered = filtered.filter(i => i.type === currentFilter);
+        }
       }
 
       // Apply search filter
@@ -751,6 +768,20 @@
     function renderTable() {
       const filtered = getFilteredInquiries();
       const container = document.getElementById('tableContainer');
+      const titleElement = document.getElementById('tableTitle');
+      
+      // Update table title based on current filter
+      if (currentFilter === 'archive') {
+        titleElement.textContent = 'Archived Inquiries';
+      } else if (currentFilter === 'all') {
+        titleElement.textContent = 'All Inquiries';
+      } else if (currentFilter === 'adopt') {
+        titleElement.textContent = 'Adoption Applications';
+      } else if (currentFilter === 'rescue') {
+        titleElement.textContent = 'Rescue Requests';
+      } else if (currentFilter === 'donate') {
+        titleElement.textContent = 'Donation Requests';
+      }
 
       if (filtered.length === 0) {
         container.innerHTML = `
@@ -826,39 +857,46 @@
       let detailsHtml = '';
 
       if (inquiry.type === 'adopt') {
-        detailsHtml = `
-          <div class="modal-title">
-            <i class="fa fa-heart"></i> Adoption Application
-          </div>
-          <div class="detail-section">
-            <h4>Personal Information</h4>
-            <div class="detail-row"><span class="detail-label">Name:</span><span class="detail-value">${inquiry.full_name}</span></div>
-            <div class="detail-row"><span class="detail-label">Email:</span><span class="detail-value">${inquiry.email_address}</span></div>
-            <div class="detail-row"><span class="detail-label">Phone:</span><span class="detail-value">${inquiry.phone_number}</span></div>
-            <div class="detail-row"><span class="detail-label">Address:</span><span class="detail-value">${inquiry.home_address}</span></div>
-            <div class="detail-row"><span class="detail-label">Contact Method:</span><span class="detail-value">${inquiry.preferred_contact_method}</span></div>
-          </div>
-          <div class="detail-section">
-            <h4>Pet Information</h4>
-            <div class="detail-row"><span class="detail-label">Other Pets:</span><span class="detail-value">${inquiry.other_pets ? 'Yes' : 'No'}</span></div>
-            <div class="detail-row"><span class="detail-label">Vaccination Status:</span><span class="detail-value">${inquiry.pets_vaccinated_spayed}</span></div>
-            <div class="detail-row"><span class="detail-label">Experience:</span><span class="detail-value">${inquiry.experience_with_pets}</span></div>
-            <div class="detail-row"><span class="detail-label">Hours Alone:</span><span class="detail-value">${inquiry.hours_pet_left_alone} hours</span></div>
-            <div class="detail-row"><span class="detail-label">Pet Location:</span><span class="detail-value">${inquiry.pet_stay_location}</span></div>
-            <div class="detail-row"><span class="detail-label">Preferred Energy:</span><span class="detail-value">${inquiry.preferred_energy_level}</span></div>
-          </div>
-          <div class="detail-section">
-            <h4>Application Details</h4>
-            <div class="detail-row"><span class="detail-label">Reason:</span><span class="detail-value">${inquiry.reason_for_adoption}</span></div>
-            <div class="detail-row"><span class="detail-label">Can Cover Costs:</span><span class="detail-value">${inquiry.can_cover_costs ? 'Yes' : 'No'}</span></div>
-            <div class="detail-row"><span class="detail-label">Willing for Checkups:</span><span class="detail-value">${inquiry.willing_vet_checkups ? 'Yes' : 'No'}</span></div>
-            <div class="detail-row"><span class="detail-label">Agreed Terms:</span><span class="detail-value">${inquiry.agree_terms ? 'Yes' : 'No'}</span></div>
-            <div class="detail-row"><span class="detail-label">Submitted:</span><span class="detail-value">${inquiry.created}</span></div>
-          </div>
-          <div style="margin-top:20px;padding-top:20px;border-top:1px solid #e0ddd9;">
-            <button class="expand-btn" id="acceptAdoptBtn-${inquiry.id}" style="background:#2d7f0d;" onclick="acceptAdoptInquiry('${inquiry.id}')">Accept</button>
-          </div>
-        `;
+        // Start with personal info
+        detailsHtml = '<div class="modal-title"><i class="fa fa-heart"></i> Adoption Application</div>' +
+          '<div id="animalDetailsLoading" style="padding:10px;color:#666;">Loading animal details...</div>' +
+          '<div class="detail-section">' +
+          '<h4>Adopter Information</h4>' +
+          '<div class="detail-row"><span class="detail-label">Name:</span><span class="detail-value">' + inquiry.full_name + '</span></div>' +
+          '<div class="detail-row"><span class="detail-label">Email:</span><span class="detail-value">' + inquiry.email_address + '</span></div>' +
+          '<div class="detail-row"><span class="detail-label">Phone:</span><span class="detail-value">' + inquiry.phone_number + '</span></div>' +
+          '<div class="detail-row"><span class="detail-label">Address:</span><span class="detail-value">' + inquiry.home_address + '</span></div>' +
+          '<div class="detail-row"><span class="detail-label">Contact Method:</span><span class="detail-value">' + inquiry.preferred_contact_method + '</span></div>' +
+          '</div>' +
+          '<div class="detail-section">' +
+          '<h4>Pet Experience</h4>' +
+          '<div class="detail-row"><span class="detail-label">Other Pets:</span><span class="detail-value">' + (inquiry.other_pets ? 'Yes' : 'No') + '</span></div>' +
+          '<div class="detail-row"><span class="detail-label">Vaccination Status:</span><span class="detail-value">' + inquiry.pets_vaccinated_spayed + '</span></div>' +
+          '<div class="detail-row"><span class="detail-label">Experience:</span><span class="detail-value">' + inquiry.experience_with_pets + '</span></div>' +
+          '<div class="detail-row"><span class="detail-label">Hours Alone:</span><span class="detail-value">' + inquiry.hours_pet_left_alone + ' hours</span></div>' +
+          '<div class="detail-row"><span class="detail-label">Pet Location:</span><span class="detail-value">' + inquiry.pet_stay_location + '</span></div>' +
+          '<div class="detail-row"><span class="detail-label">Preferred Energy:</span><span class="detail-value">' + inquiry.preferred_energy_level + '</span></div>' +
+          '</div>' +
+          '<div class="detail-section">' +
+          '<h4>Application Details</h4>' +
+          '<div class="detail-row"><span class="detail-label">Reason:</span><span class="detail-value">' + inquiry.reason_for_adoption + '</span></div>' +
+          '<div class="detail-row"><span class="detail-label">Can Cover Costs:</span><span class="detail-value">' + (inquiry.can_cover_costs ? 'Yes' : 'No') + '</span></div>' +
+          '<div class="detail-row"><span class="detail-label">Willing for Checkups:</span><span class="detail-value">' + (inquiry.willing_vet_checkups ? 'Yes' : 'No') + '</span></div>' +
+          '<div class="detail-row"><span class="detail-label">Agreed Terms:</span><span class="detail-value">' + (inquiry.agree_terms ? 'Yes' : 'No') + '</span></div>' +
+          '<div class="detail-row"><span class="detail-label">Submitted:</span><span class="detail-value">' + inquiry.created + '</span></div>' +
+          '</div>';
+
+        // If there's an animal_id, fetch and display animal details
+        if (inquiry.animal_id) {
+          detailsHtml += '<div class="detail-section" id="animalDetailsSection" style="border:1px solid #9c6644;padding:15px;background:#f9f7f4;border-radius:6px;margin-top:15px;">' +
+            '<h4 style="margin-top:0;"><i class="fa fa-paw"></i> Animal Being Adopted</h4>' +
+            '<div id="animalDetailsContent" style="padding:10px;color:#666;">Loading...</div>' +
+            '</div>';
+        }
+
+        detailsHtml += '<div style="margin-top:20px;padding-top:20px;border-top:1px solid #e0ddd9;">' +
+          '<button class="expand-btn" id="acceptAdoptBtn-' + inquiry.id + '" style="background:#2d7f0d;" onclick="acceptAdoptInquiry(\'' + inquiry.id + '\')">Accept</button>' +
+          '</div>';
       } else if (inquiry.type === 'rescue') {
         const healthList = inquiry.health_condition ? inquiry.health_condition.join(', ') : 'Not specified';
         const behaviorList = inquiry.behavior_condition ? inquiry.behavior_condition.join(', ') : 'Not specified';
@@ -1036,7 +1074,69 @@
       // Populate image slots (async): try to find working URLs and replace placeholders
       populateImageSlots().catch(e => console.warn('populateImageSlots error', e));
 
+      // If this is an adoption application with an animal_id, fetch and display animal details
+      if (inquiry.type === 'adopt' && inquiry.animal_id) {
+        loadAdoptionAnimalDetails(inquiry.animal_id);
+      }
+
       document.getElementById('detailModal').classList.add('active');
+    }
+
+    // Load animal details for adoption application
+    async function loadAdoptionAnimalDetails(animalId) {
+      try {
+        const { data, error } = await supabase.from('animals').select('*').eq('id', animalId).single();
+        
+        const contentDiv = document.getElementById('animalDetailsContent');
+        if (!contentDiv) return;
+
+        if (error || !data) {
+          contentDiv.innerHTML = '<p style="color:#999;">Animal details not found.</p>';
+          return;
+        }
+
+        const animal = data;
+        const mainImageUrl = animal.main_image || (animal.gallery && animal.gallery[0]) || '/img/sample_adopt/cat 1.jpg';
+        
+        let galleryHtml = '';
+        if (animal.gallery && animal.gallery.length > 0) {
+          galleryHtml = '<div class="image-gallery" style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">' +
+            animal.gallery.slice(0, 3).map((img, idx) => {
+              return '<img src="' + img + '" alt="Gallery ' + (idx + 1) + '" style="height:80px;width:80px;object-fit:cover;border-radius:4px;border:1px solid #ddd;" />';
+            }).join('') +
+            '</div>';
+        }
+
+        const html = '<div style="display:flex;gap:15px;">' +
+          '<div style="flex:0 0 120px;">' +
+          '<img src="' + mainImageUrl + '" alt="' + animal.name + '" style="width:120px;height:120px;object-fit:cover;border-radius:6px;border:1px solid #ddd;" />' +
+          galleryHtml +
+          '</div>' +
+          '<div style="flex:1;">' +
+          '<h5 style="margin:0 0 10px 0;color:#333;font-size:18px;font-weight:600;">' + animal.name + '</h5>' +
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px;">' +
+          '<div><span style="font-weight:600;">Type:</span> ' + (animal.type || 'N/A') + '</div>' +
+          '<div><span style="font-weight:600;">Breed:</span> ' + (animal.breed || 'N/A') + '</div>' +
+          '<div><span style="font-weight:600;">Age:</span> ' + (animal.age || 'N/A') + '</div>' +
+          '<div><span style="font-weight:600;">Sex:</span> ' + (animal.sex || 'N/A') + '</div>' +
+          '<div><span style="font-weight:600;">Size:</span> ' + (animal.size || 'N/A') + '</div>' +
+          '<div><span style="font-weight:600;">Health:</span> ' + (animal.health || 'N/A') + '</div>' +
+          '</div>' +
+          '<div style="margin-top:8px;font-size:13px;color:#666;">' +
+          '<p style="margin:4px 0;"><span style="font-weight:600;">Behavior:</span> ' + (animal.behavior || 'N/A') + '</p>' +
+          '<p style="margin:4px 0;"><span style="font-weight:600;">Rescued by:</span> ' + (animal.rescuer_name || 'N/A') + '</p>' +
+          '</div>' +
+          '</div>' +
+          '</div>';
+
+        contentDiv.innerHTML = html;
+      } catch (e) {
+        console.error('Error loading animal details:', e);
+        const contentDiv = document.getElementById('animalDetailsContent');
+        if (contentDiv) {
+          contentDiv.innerHTML = '<p style="color:#999;">Error loading animal details.</p>';
+        }
+      }
     }
 
     function closeModal() {
@@ -1615,45 +1715,162 @@
       window.location.href = 'admin-login.html';
     }
 
-    // Mark a rescue inquiry as accepted (temporary, UI-only)
-    function acceptRescueInquiry(id) {
+    // Mark a rescue inquiry as accepted: confirm, then persist to `animals` table
+    async function acceptRescueInquiry(id) {
       const btn = document.getElementById(`acceptRescueBtn-${id}`);
       if (!btn) return;
 
+      // confirmation
+      const confirmMsg = 'Are you sure you want to ACCEPT this rescue request?\n\n' +
+        'This will publish the animal to the adoption listings and cannot be fully undone via the admin UI.';
+      if (!window.confirm(confirmMsg)) return;
+
       try {
-        // find inquiry in allInquiries and mark as accepted
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+
+        // find the inquiry
         const idx = allInquiries.findIndex(x => x.id === id);
-        if (idx !== -1) {
-          allInquiries[idx].accepted = true;
-          allInquiries[idx].accepted_at = new Date().toISOString();
+        if (idx === -1) {
+          alert('Could not find the inquiry.');
+          btn.disabled = false;
+          btn.style.opacity = '';
+          return;
         }
 
-        // disable button and update text/style
-        btn.disabled = true;
+        const inquiry = allInquiries[idx];
+
+        // Prepare animal record for insertion
+        let gallery = [];
+        try {
+          const raw = inquiry.evidence_url || inquiry.evidenceUrl || null;
+          gallery = raw ? (Array.isArray(raw) ? raw : JSON.parse(raw)) : [];
+        } catch (e) { gallery = []; }
+
+        const main_image = (gallery && gallery.length) ? gallery[0] : (inquiry.main_image || null);
+
+        const animalRow = {
+          name: inquiry.animal_name || inquiry.name || (inquiry.reporter_full_name ? (`Rescue from ${inquiry.reporter_full_name}`) : 'Rescued Animal'),
+          type: inquiry.animal_type || inquiry.type || null,
+          age: inquiry.estimated_age || inquiry.age || null,
+          sex: inquiry.sex || null,
+          breed: inquiry.breed || null,
+          size: inquiry.size || null,
+          health: Array.isArray(inquiry.health_condition) ? inquiry.health_condition.join(', ') : (inquiry.health_condition || null),
+          behavior: Array.isArray(inquiry.behavior_condition) ? inquiry.behavior_condition.join(', ') : (inquiry.behavior_condition || null),
+          main_image: main_image,
+          gallery: gallery,
+          rescuer_name: inquiry.reporter_full_name || null,
+          rescuer_contact: inquiry.reporter_phone || inquiry.reporter_email || null,
+          created_at: new Date().toISOString()
+        };
+
+        // insert into animals table
+        const { data: inserted, error: insertErr, status: insertStatus } = await supabase.from('animals').insert([animalRow]).select();
+        if (insertErr) {
+          console.error('Failed to insert animal record', insertErr, 'status=', insertStatus);
+          // detect common causes and give next steps
+          if (insertStatus === 400 && insertErr.message && insertErr.message.toLowerCase().includes('no api key')) {
+            alert('Failed to publish animal to adoption listings: No API key found in request.\n\n' +
+              'Likely causes:\n- The Supabase anon key is not being sent (check `public/js/supabase-init.js`).\n- Or the request reached the REST endpoint without headers (check Network tab request headers).\n\n' +
+              'Steps:\n1) Verify `supabase-init.js` contains your project URL and anon (public) key.\n2) Ensure `js/supabase-init.js` is included before this script.\n3) In DevTools Network, inspect the failing request and confirm the `apikey` header is present.\n\nIf the `animals` table does not exist, run the SQL in `supabase/add-animals-table.sql` from your Supabase SQL editor.'
+            );
+          } else if (insertStatus === 404) {
+            alert('Failed to publish animal to adoption listings: table not found.\n\nPlease run the migration `supabase/add-animals-table.sql` in your Supabase project SQL editor to create the `animals` table.');
+          } else {
+            alert('Failed to publish animal to adoption listings: ' + (insertErr.message || JSON.stringify(insertErr)));
+          }
+          btn.disabled = false;
+          btn.style.opacity = '';
+          return;
+        }
+
+        // Update the rescue row to mark accepted
+        const updatePayload = { accepted: true, accepted_at: new Date().toISOString() };
+        const { data: rescueUpdateData, error: rescueUpdateError } = await supabase.from('rescue').update(updatePayload).eq('id', id).select();
+        if (rescueUpdateError) {
+          console.error('Error updating rescue row accepted flag:', rescueUpdateError);
+          alert('Rescue published to adoption but failed to mark as accepted: ' + rescueUpdateError.message);
+          btn.disabled = false;
+          btn.style.opacity = '';
+          return;
+        }
+
+        // update local state and UI
+        allInquiries[idx].accepted = true;
+        allInquiries[idx].accepted_at = new Date().toISOString();
+
         btn.style.background = '#999';
         btn.textContent = '✓ Accepted';
         btn.title = 'This inquiry has been accepted';
 
-        // show alert
-        alert('Rescue inquiry marked as accepted.');
+        alert('Rescue accepted and published to adoption listings.');
+
+        // close modal and refresh table
+        closeModal();
+        renderTable();
       } catch (e) {
         console.error('acceptRescueInquiry error', e);
-        alert('Error marking inquiry as accepted: ' + e.message);
+        alert('Error accepting inquiry: ' + (e.message || e));
+        if (btn) { btn.disabled = false; btn.style.opacity = ''; }
       }
     }
 
-    // Mark an adoption inquiry as accepted (temporary, UI-only)
-    function acceptAdoptInquiry(id) {
+    // Mark an adoption inquiry as accepted
+    async function acceptAdoptInquiry(id) {
       const btn = document.getElementById(`acceptAdoptBtn-${id}`);
       if (!btn) return;
 
       try {
-        // find inquiry in allInquiries and mark as accepted
-        const idx = allInquiries.findIndex(x => x.id === id);
-        if (idx !== -1) {
-          allInquiries[idx].accepted = true;
-          allInquiries[idx].accepted_at = new Date().toISOString();
+        if (!confirm('Are you sure you want to approve this adoption inquiry?')) {
+          return;
         }
+
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+
+        // Find the inquiry
+        const idx = allInquiries.findIndex(x => x.id === id);
+        if (idx === -1) {
+          alert('Could not find the inquiry.');
+          btn.disabled = false;
+          btn.style.opacity = '';
+          return;
+        }
+
+        const inquiry = allInquiries[idx];
+        
+        // Mark inquiry as accepted in the adopt table
+        const { data: updateData, error: updateError } = await supabase.from('adopt').update({ 
+          accepted: true, 
+          accepted_at: new Date().toISOString() 
+        }).eq('id', id).select();
+        
+        if (updateError) {
+          console.error('Error updating adoption inquiry:', updateError);
+          alert('Error updating adoption inquiry: ' + updateError.message);
+          btn.disabled = false;
+          btn.style.opacity = '';
+          return;
+        }
+
+        console.log('Adoption inquiry marked as accepted:', updateData);
+
+        // Mark the animal as unavailable (instead of deleting it, which would cascade delete the adoption inquiry)
+        if (inquiry.animal_id) {
+          const { error } = await supabase.from('animals').update({ 
+            available: false 
+          }).eq('id', inquiry.animal_id);
+          if (error) {
+            console.warn('Could not mark animal as unavailable:', error);
+          } else {
+            console.log('Animal marked as unavailable');
+          }
+        }
+
+        // Update local state
+        allInquiries[idx].accepted = true;
+        allInquiries[idx].accepted_at = new Date().toISOString();
 
         // disable button and update text/style
         btn.disabled = true;
@@ -1662,25 +1879,60 @@
         btn.title = 'This inquiry has been accepted';
 
         // show alert
-        alert('Adoption inquiry marked as accepted.');
+        alert('Adoption inquiry approved!');
+        
+        // Reload the table after a brief delay to refresh the view
+        setTimeout(() => {
+          loadInquiries();
+          closeModal();
+        }, 500);
       } catch (e) {
         console.error('acceptAdoptInquiry error', e);
-        alert('Error marking inquiry as accepted: ' + e.message);
+        alert('Error approving adoption inquiry: ' + e.message);
+        btn.disabled = false;
+        btn.style.opacity = '';
       }
     }
 
-    // Mark a donation inquiry as accepted (temporary, UI-only)
-    function acceptDonateInquiry(id) {
+    // Mark a donation inquiry as accepted (persisted)
+    async function acceptDonateInquiry(id) {
       const btn = document.getElementById(`acceptDonateBtn-${id}`);
       if (!btn) return;
 
       try {
-        // find inquiry in allInquiries and mark as accepted
+        if (!confirm('Are you sure you want to accept this donation request?')) return;
+
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+
+        // Find the inquiry
         const idx = allInquiries.findIndex(x => x.id === id);
-        if (idx !== -1) {
-          allInquiries[idx].accepted = true;
-          allInquiries[idx].accepted_at = new Date().toISOString();
+        if (idx === -1) {
+          alert('Could not find the inquiry.');
+          btn.disabled = false;
+          btn.style.opacity = '';
+          return;
         }
+
+        // Update donate row in Supabase
+        const { data: updateData, error } = await supabase.from('donate').update({
+          accepted: true,
+          accepted_at: new Date().toISOString()
+        }).eq('id', id).select();
+
+        if (error) {
+          console.error('Error updating donation inquiry:', error);
+          alert('Error updating donation inquiry: ' + (error.message || JSON.stringify(error)));
+          btn.disabled = false;
+          btn.style.opacity = '';
+          return;
+        }
+
+        console.log('Donation inquiry marked accepted:', updateData);
+
+        // Update local state
+        allInquiries[idx].accepted = true;
+        allInquiries[idx].accepted_at = new Date().toISOString();
 
         // disable button and update text/style
         btn.disabled = true;
@@ -1688,11 +1940,17 @@
         btn.textContent = '✓ Accepted';
         btn.title = 'This inquiry has been accepted';
 
-        // show alert
-        alert('Donation inquiry marked as accepted.');
+        alert('Donation inquiry accepted and moved to archive.');
+
+        // Refresh inquiries to reflect change
+        setTimeout(() => {
+          loadInquiries();
+          closeModal();
+        }, 400);
       } catch (e) {
         console.error('acceptDonateInquiry error', e);
-        alert('Error marking inquiry as accepted: ' + e.message);
+        alert('Error accepting donation inquiry: ' + (e.message || e));
+        if (btn) { btn.disabled = false; btn.style.opacity = ''; }
       }
     }
 

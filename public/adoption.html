@@ -112,131 +112,62 @@
   </div>
 
   <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script type="text/javascript" src="js/jquery.1.11.1.js"></script>
   <script type="text/javascript" src="js/bootstrap.js"></script>
+  <script type="text/javascript" src="js/supabase-init.js"></script>
   <script type="text/javascript">
-    // Animal data
-    const animals = [
-      {
-        id: 1,
-        name: "Whiskers",
-        image: "img/sample_adopt/cat 1.jpg",
-        galleryImages: [
-          "img/sample_adopt/cat 1.jpg",
-          "img/sample_adopt/cat 1.jpg",
-          "img/sample_adopt/cat 1.jpg"
-        ],
-        type: "Cat",
-        age: "2 years",
-        sex: "Female",
-        breed: "Tabby Mix",
-        size: "4 lbs",
-        health: "Healthy, up-to-date on vaccinations",
-        behavior: "Friendly, playful, good with children",
-        rescuerName: "Jane Smith",
-        rescuerContact: "jane@petrescue.com"
-      },
-      {
-        id: 2,
-        name: "Shadow",
-        image: "img/sample_adopt/cat 2.jpg",
-        galleryImages: [
-          "img/sample_adopt/cat 2.jpg",
-          "img/sample_adopt/cat 2.jpg",
-          "img/sample_adopt/cat 2.jpg"
-        ],
-        type: "Cat",
-        age: "1 year",
-        sex: "Male",
-        breed: "Black Domestic Shorthair",
-        size: "5 lbs",
-        health: "Healthy, neutered",
-        behavior: "Shy but warming up, needs patient home",
-        rescuerName: "John Doe",
-        rescuerContact: "john@petrescue.com"
-      },
-      {
-        id: 3,
-        name: "Mittens",
-        image: "img/sample_adopt/cat 3.jpg",
-        galleryImages: [
-          "img/sample_adopt/cat 3.jpg",
-          "img/sample_adopt/cat 3.jpg",
-          "img/sample_adopt/cat 3.jpg"
-        ],
-        type: "Cat",
-        age: "3 years",
-        sex: "Female",
-        breed: "British Shorthair",
-        size: "6 lbs",
-        health: "Healthy, spayed",
-        behavior: "Affectionate, loves attention",
-        rescuerName: "Sarah Johnson",
-        rescuerContact: "sarah@petrescue.com"
-      },
-      {
-        id: 4,
-        name: "Max",
-        image: "img/sample_adopt/dog 1.jpg",
-        galleryImages: [
-          "img/sample_adopt/dog 1.jpg",
-          "img/sample_adopt/dog 1.jpg",
-          "img/sample_adopt/dog 1.jpg"
-        ],
-        type: "Dog",
-        age: "3 years",
-        sex: "Male",
-        breed: "Miniature Poodle Mix",
-        size: "55 lbs",
-        health: "Healthy, neutered, vaccinated",
-        behavior: "Friendly, energetic, good with families",
-        rescuerName: "Mike Wilson",
-        rescuerContact: "mike@petrescue.com"
-      },
-      {
-        id: 5,
-        name: "Bella",
-        image: "img/sample_adopt/dog 2.jpg",
-        galleryImages: [
-          "img/sample_adopt/dog 2.jpg",
-          "img/sample_adopt/dog 2.jpg",
-          "img/sample_adopt/dog 2.jpg"
-        ],
-        type: "Dog",
-        age: "2 years",
-        sex: "Female",
-        breed: "Staffordshire Bull Terrier",
-        size: "50 lbs",
-        health: "Healthy, minor hip dysplasia (manageable)",
-        behavior: "Gentle, loves walks, good with other dogs",
-        rescuerName: "Emily Brown",
-        rescuerContact: "emily@petrescue.com"
-      },
-      {
-        id: 6,
-        name: "Rocky",
-        image: "img/sample_adopt/dog 3.jpg",
-        galleryImages: [
-          "img/sample_adopt/dog 3.jpg",
-          "img/sample_adopt/dog 3.jpg",
-          "img/sample_adopt/dog 3.jpg"
-        ],
-        type: "Dog",
-        age: "4 years",
-        sex: "Male",
-        breed: "Golden Retriever",
-        size: "65 lbs",
-        health: "Healthy, fully vaccinated",
-        behavior: "Protective, loyal, needs experienced handler",
-        rescuerName: "Tom Martinez",
-        rescuerContact: "tom@petrescue.com"
+    // animals will be loaded from Supabase `animals` table
+    let animals = [];
+
+    async function loadAnimalsFromSupabase() {
+      try {
+        const { data, error } = await supabase.from('animals').select('*').order('created_at', { ascending: false });
+        if (error) {
+          console.error('Failed to load animals:', error);
+          // fallback: leave animals empty
+          animals = [];
+        } else {
+          animals = (data || [])
+            .filter(r => r.available !== false) // Only show available animals (default is true)
+            .map(r => ({
+              id: r.id,
+              name: r.name,
+              type: r.type,
+              age: r.age,
+              sex: r.sex,
+              breed: r.breed,
+              size: r.size,
+              health: r.health,
+              behavior: r.behavior,
+              rescuerName: r.rescuer_name,
+              rescuerContact: r.rescuer_contact,
+              image: r.main_image || (r.gallery && r.gallery[0]) || '/img/sample_adopt/cat 1.jpg',
+              galleryImages: r.gallery || []
+            }));
+        }
+      } catch (e) {
+        console.error('Error loading animals from Supabase', e);
+        animals = [];
       }
-    ];
+
+      renderGallery();
+      populateBreedOptions();
+    }
+
+    // Auto-refresh animals every 2 seconds so new published rescues and deletions appear immediately
+    setInterval(loadAnimalsFromSupabase, 2000);
 
     // Initialize gallery on page load
     document.addEventListener('DOMContentLoaded', function() {
-      renderGallery();
-      populateBreedOptions();
+      // ensure Supabase client is ready (provided by js/supabase-init.js)
+      if (window.supabase) {
+        loadAnimalsFromSupabase();
+      } else {
+        // fallback to render (no data)
+        renderGallery();
+        populateBreedOptions();
+      }
     });
 
     // Populate breed dropdown dynamically based on animals and selected type
@@ -305,20 +236,29 @@
     // Render gallery grid (adds data attributes used by filters)
     function renderGallery() {
       const grid = document.getElementById('adoptionGrid');
-      grid.innerHTML = animals.map(animal => `
-        <div class="adoption-gallery-card" data-type="${animal.type}" data-breed="${animal.breed}">
-          <div class="adoption-gallery-image-wrapper">
-            <img src="${animal.image}" alt="${animal.name}" class="adoption-gallery-image" />
-            <div class="adoption-gallery-overlay">
-              <button class="adopt-btn" onclick="openModal(${animal.id})">See Details</button>
-            </div>
-          </div>
-          <div class="adoption-gallery-info">
-            <h3>${animal.name}</h3>
-            <p class="animal-breed">${animal.breed}</p>
-          </div>
-        </div>
-      `).join('');
+      grid.innerHTML = animals.map(animal => {
+        const html = '<div class="adoption-gallery-card" data-type="' + (animal.type || '') + '" data-breed="' + (animal.breed || '') + '">' +
+          '<div class="adoption-gallery-image-wrapper">' +
+          '<img src="' + (animal.image || '/img/sample_adopt/cat 1.jpg') + '" alt="' + (animal.name || 'Animal') + '" class="adoption-gallery-image" />' +
+          '<div class="adoption-gallery-overlay">' +
+          '<button class="adopt-btn" data-id="' + (animal.id || '') + '">See Details</button>' +
+          '</div>' +
+          '</div>' +
+          '<div class="adoption-gallery-info">' +
+          '<h3>' + (animal.name || 'Unknown') + '</h3>' +
+          '<p class="animal-breed">' + (animal.breed || 'Unknown') + '</p>' +
+          '</div>' +
+          '</div>';
+        return html;
+      }).join('');
+
+      // Attach click handlers to all buttons
+      document.querySelectorAll('.adopt-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const id = this.getAttribute('data-id');
+          openModal(id);
+        });
+      });
 
       // After rendering, ensure breed dropdown reflects current type selection
       const currentType = document.getElementById('typeSelect') ? document.getElementById('typeSelect').value : '';
@@ -331,77 +271,92 @@
       if (!animal) return;
 
       const modalContent = document.getElementById('modalContent');
-      modalContent.innerHTML = `
-        <button class="modal-close-btn" onclick="closeModal()">×</button>
-        <div class="animal-details-content">
-          <div class="animal-details-left">
-            <img src="${animal.image}" alt="${animal.name}" class="animal-details-image" onclick="openPreview('${animal.image}')" style="cursor:pointer;" />
-            <div class="animal-gallery">
-              ${animal.galleryImages.map((img, idx) => `
-                <img src="${img}" alt="${animal.name} gallery ${idx + 1}" class="gallery-thumbnail" onclick="openPreview('${img}')" />
-              `).join('')}
-            </div>
-          </div>
+      
+      // Build gallery images
+      let galleryHtml = '';
+      if (animal.galleryImages && animal.galleryImages.length > 0) {
+        galleryHtml = animal.galleryImages.map((img, idx) => {
+          return '<img src="' + img + '" alt="' + animal.name + ' gallery ' + (idx + 1) + '" class="gallery-thumbnail" style="cursor:pointer;" />';
+        }).join('');
+      }
+      
+      const rescuerContact = animal.rescuerContact || 'Not provided';
+      let rescuerContactHtml = '<span>' + rescuerContact + '</span>';
+      if (animal.rescuerContact && animal.rescuerContact.includes('@')) {
+        rescuerContactHtml = '<a href="mailto:' + animal.rescuerContact + '">' + animal.rescuerContact + '</a>';
+      }
 
-          <div class="animal-details-right">
-            <h2>${animal.name}</h2>
+      const mainImageUrl = animal.image || '/img/sample_adopt/cat 1.jpg';
+      
+      const html = '<button class="modal-close-btn" onclick="closeModal()">×</button>' +
+        '<div class="animal-details-content">' +
+        '<div class="animal-details-left">' +
+        '<img src="' + mainImageUrl + '" alt="' + (animal.name || 'Animal') + '" class="animal-details-image" style="cursor:pointer;" />' +
+        '<div class="animal-gallery">' +
+        galleryHtml +
+        '</div>' +
+        '</div>' +
+        '<div class="animal-details-right">' +
+        '<h2>' + (animal.name || 'Unknown') + '</h2>' +
+        '<div class="details-section">' +
+        '<h3>Animal Information</h3>' +
+        '<div class="details-row">' +
+        '<span class="details-label">Animal Type:</span>' +
+        '<span class="details-value">' + (animal.type || 'N/A') + '</span>' +
+        '</div>' +
+        '<div class="details-row">' +
+        '<span class="details-label">Age:</span>' +
+        '<span class="details-value">' + (animal.age || 'N/A') + '</span>' +
+        '</div>' +
+        '<div class="details-row">' +
+        '<span class="details-label">Sex:</span>' +
+        '<span class="details-value">' + (animal.sex || 'N/A') + '</span>' +
+        '</div>' +
+        '<div class="details-row">' +
+        '<span class="details-label">Breed:</span>' +
+        '<span class="details-value">' + (animal.breed || 'N/A') + '</span>' +
+        '</div>' +
+        '<div class="details-row">' +
+        '<span class="details-label">Size/Weight:</span>' +
+        '<span class="details-value">' + (animal.size || 'N/A') + '</span>' +
+        '</div>' +
+        '</div>' +
+        '<div class="details-section">' +
+        '<h3>Health & Behavior</h3>' +
+        '<div class="details-row">' +
+        '<span class="details-label">Health Condition:</span>' +
+        '<span class="details-value">' + (animal.health || 'Not specified') + '</span>' +
+        '</div>' +
+        '<div class="details-row">' +
+        '<span class="details-label">Behavior Notes:</span>' +
+        '<span class="details-value">' + (animal.behavior || 'Not specified') + '</span>' +
+        '</div>' +
+        '</div>' +
+        '<div class="details-section">' +
+        '<h3>Rescuer/Owner Contact</h3>' +
+        '<div class="details-row">' +
+        '<span class="details-label">Name:</span>' +
+        '<span class="details-value">' + (animal.rescuerName || 'Not provided') + '</span>' +
+        '</div>' +
+        '<div class="details-row">' +
+        '<span class="details-label">Contact:</span>' +
+        '<span class="details-value">' + rescuerContactHtml + '</span>' +
+        '</div>' +
+        '</div>' +
+        '<div class="modal-actions">' +
+        '<a href="adoption-form.html?animalId=' + animal.id + '" class="btn btn-custom btn-lg">Adopt</a>' +
+        '</div>' +
+        '</div>' +
+        '</div>';
 
-            <div class="details-section">
-              <h3>Animal Information</h3>
-              <div class="details-row">
-                <span class="details-label">Animal Type:</span>
-                <span class="details-value">${animal.type}</span>
-              </div>
-              <div class="details-row">
-                <span class="details-label">Age:</span>
-                <span class="details-value">${animal.age}</span>
-              </div>
-              <div class="details-row">
-                <span class="details-label">Sex:</span>
-                <span class="details-value">${animal.sex}</span>
-              </div>
-              <div class="details-row">
-                <span class="details-label">Breed:</span>
-                <span class="details-value">${animal.breed}</span>
-              </div>
-              <div class="details-row">
-                <span class="details-label">Size/Weight:</span>
-                <span class="details-value">${animal.size}</span>
-              </div>
-            </div>
+      modalContent.innerHTML = html;
 
-            <div class="details-section">
-              <h3>Health & Behavior</h3>
-              <div class="details-row">
-                <span class="details-label">Health Condition:</span>
-                <span class="details-value">${animal.health}</span>
-              </div>
-              <div class="details-row">
-                <span class="details-label">Behavior Notes:</span>
-                <span class="details-value">${animal.behavior}</span>
-              </div>
-            </div>
-
-            <div class="details-section">
-              <h3>Rescuer/Owner Contact</h3>
-              <div class="details-row">
-                <span class="details-label">Name:</span>
-                <span class="details-value">${animal.rescuerName}</span>
-              </div>
-              <div class="details-row">
-                <span class="details-label">Contact:</span>
-                <span class="details-value">
-                  <a href="mailto:${animal.rescuerContact}">${animal.rescuerContact}</a>
-                </span>
-              </div>
-            </div>
-
-            <div class="modal-actions">
-              <a href="adoption-form.html?animalId=${animal.id}" class="btn btn-custom btn-lg">Adopt</a>
-            </div>
-          </div>
-        </div>
-      `;
+      // Add click handlers to gallery images after rendering
+      document.querySelectorAll('.animal-details-image, .gallery-thumbnail').forEach(img => {
+        img.addEventListener('click', function() {
+          openPreview(this.src);
+        });
+      });
 
       document.getElementById('animalModal').style.display = 'flex';
     }
