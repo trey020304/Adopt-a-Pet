@@ -19,45 +19,227 @@
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,500,600,700,800,900" rel="stylesheet" />
-  <title>Donate — Adopt a Pet</title>
+  <title>Donation Form — Adopt a Pet</title>
+  <style>
+    body { background: #f7f6f4; }
+    header .container { padding-top: 40px; padding-bottom: 60px; }
+    .donate-form { max-width: 780px; margin: 0 auto; background: #fff; padding: 28px; border-radius: 8px; box-shadow: 0 8px 30px rgba(0,0,0,0.06); }
+    .donate-form h2 { font-weight:700; margin-bottom:12px; }
+    .donate-form fieldset { border: none; margin: 18px 0; padding: 0; }
+    .donate-form legend { font-weight:700; margin-bottom:8px; color:#333; }
+    .donate-form label { display:block; margin-bottom:6px; font-size:14px; color:#444; }
+    .donate-form .form-control { margin-bottom:12px; border-radius:6px; border:1px solid #ddd; padding:10px 12px; box-sizing: border-box; }
+    .donate-form select.form-control, .donate-form input.form-control { height:44px; line-height:20px; }
+    .donate-form .items-grid { display:grid; grid-template-columns: 1fr 80px; gap:8px; align-items:center; }
+    .donate-form .items-grid label { display:flex; gap:8px; align-items:center; }
+    #otherWrapper { grid-column: 1 / -1; display:flex !important; gap:8px; align-items:center; }
+    #otherWrapper #item_other { flex:1; }
+    #otherWrapper #qty_other { width:80px; }
+    .donate-form .btn-row { display:flex; gap:12px; justify-content:flex-end; margin-top:16px; }
+    .btn-custom { background:#8a5036; color:#fff; padding:10px 20px; border-radius:24px; border:none; }
+    .btn-back { background:transparent; border:2px solid #8a5036; color:#8a5036; padding:8px 18px; border-radius:24px; }
+    #donationPreview img { max-width: 120px; border-radius:6px; display:block; }
+  </style>
 </head>
 <body>
-  <!-- Navigation -->
+  <!-- Navigation (Logo Only) -->
   <nav id="menu" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
       <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
         <a class="navbar-brand page-scroll" href="index.html">
           <img src="img/nav-logo.png" alt="logo" class="navbar-logo" /> Adopt a Pet
         </a>
       </div>
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav navbar-right">
-          <li><a href="index.html#features" class="page-scroll">Services</a></li>
-          <li><a href="index.html#about" class="page-scroll">About</a></li>
-          <li><a href="adoption.html" class="page-scroll">Adopt</a></li>
-          <li><a href="index.html#rescue-donate-section" class="page-scroll">Rescue & Donate</a></li>
-          <li><a href="index.html#team" class="page-scroll">Team</a></li>
-          <li><a href="index.html#contact" class="page-scroll">Contact</a></li>
-        </ul>
-      </div>
     </div>
   </nav>
 
-  <!-- Page Header -->
-  <header id="header" style="padding-top:120px;">
-    <div class="container text-center" style="padding:80px 0;">
-      <h1 style="font-size:48px; font-weight:700; color:#333;">Donate Page</h1>
-      <p style="max-width:800px; margin:20px auto; color:#333;">This is the donate page. More content coming soon.</p>
+  <header id="header" style="padding-top:100px;">
+    <div class="container">
+      <div class="donate-form">
+        <h2>DONATION FORM</h2>
+        <p style="color:#666; margin-bottom:18px;">Fields marked with * are required. You will be asked to confirm before finalizing your donation.</p>
+        <form id="donateForm">
+          <fieldset>
+            <legend>1. Donor Information</legend>
+            <label>Full Name *</label>
+            <input name="donor_full_name" class="form-control" required />
+
+            <div style="display:flex; gap:12px;">
+              <div style="flex:1;"><label>Phone Number *</label><input name="donor_phone" class="form-control" required /></div>
+              <div style="flex:1;"><label>Email Address *</label><input name="donor_email" type="email" class="form-control" required /></div>
+            </div>
+
+            <label>Preferred Contact Method *</label>
+            <select name="preferred_contact_method" class="form-control" required>
+              <option value="">Select</option>
+              <option value="Call">Call</option>
+              <option value="SMS">SMS</option>
+              <option value="Email">Email</option>
+            </select>
+          </fieldset>
+
+          <fieldset>
+            <legend>2. Donation Items</legend>
+            <div class="items-grid">
+              <label><input type="checkbox" name="item_pet_food_cat" class="item-checkbox" /> Pet Food (Cat)</label>
+              <input type="number" min="1" name="qty_pet_food_cat" class="form-control qty-input" placeholder="Qty" />
+
+              <label><input type="checkbox" name="item_pet_food_dog" class="item-checkbox" /> Pet Food (Dog)</label>
+              <input type="number" min="1" name="qty_pet_food_dog" class="form-control qty-input" placeholder="Qty" />
+
+              <label><input type="checkbox" name="item_bowls" class="item-checkbox" /> Bowls</label>
+              <input type="number" min="1" name="qty_bowls" class="form-control qty-input" placeholder="Qty" />
+
+              <label><input type="checkbox" name="item_toys" class="item-checkbox" /> Toys</label>
+              <input type="number" min="1" name="qty_toys" class="form-control qty-input" placeholder="Qty" />
+
+              <label><input type="checkbox" name="item_leashes" class="item-checkbox" /> Leashes</label>
+              <input type="number" min="1" name="qty_leashes" class="form-control qty-input" placeholder="Qty" />
+
+              <label><input type="checkbox" name="item_collars" class="item-checkbox" /> Collars</label>
+              <input type="number" min="1" name="qty_collars" class="form-control qty-input" placeholder="Qty" />
+
+              <label><input type="checkbox" name="item_litter" class="item-checkbox" /> Litter</label>
+              <input type="number" min="1" name="qty_litter" class="form-control qty-input" placeholder="Qty" />
+
+              <label><input type="checkbox" name="item_blankets" class="item-checkbox" /> Blankets</label>
+              <input type="number" min="1" name="qty_blankets" class="form-control qty-input" placeholder="Qty" />
+
+              <label><input type="checkbox" name="item_bedding" class="item-checkbox" /> Bedding</label>
+              <input type="number" min="1" name="qty_bedding" class="form-control qty-input" placeholder="Qty" />
+
+              <label><input type="checkbox" name="item_medicine" class="item-checkbox" /> Medicine</label>
+              <input type="number" min="1" name="qty_medicine" class="form-control qty-input" placeholder="Qty" />
+
+              <label><input type="checkbox" name="item_grooming" class="item-checkbox" /> Grooming supplies</label>
+              <input type="number" min="1" name="qty_grooming" class="form-control qty-input" placeholder="Qty" />
+
+              <label><input type="checkbox" name="item_crates" class="item-checkbox" /> Crates/Cages</label>
+              <input type="number" min="1" name="qty_crates" class="form-control qty-input" placeholder="Qty" />
+
+              <label><input type="checkbox" name="item_cleaning" class="item-checkbox" /> Cleaning supplies</label>
+              <input type="number" min="1" name="qty_cleaning" class="form-control qty-input" placeholder="Qty" />
+
+              <label><input type="checkbox" id="item_other_check" name="item_other_check" class="item-checkbox" /> Other</label>
+              <div id="otherWrapper" style="display:none; grid-column: 1 / -1; display:flex; gap:8px; align-items:center;"><input id="item_other" name="item_other" class="form-control" placeholder="Describe other item" /><input type="number" min="1" id="qty_other" name="qty_other" class="form-control" placeholder="Qty" style="width:80px;" /></div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>3. Drop-Off / Pick-Up Logistics</legend>
+            <label>Donation Method *</label>
+            <select id="donationMethodSelect" name="donation_method" class="form-control" required>
+              <option value="">Select</option>
+              <option value="Drop-off at shelter">Drop-off at shelter</option>
+              <option value="Request pick-up">Request pick-up</option>
+            </select>
+
+            <div id="pickupAddressWrapper" style="display:none; margin-top:12px;">
+              <label>Pickup Address</label>
+              <input id="pickupAddressInput" name="pickup_dropoff_address" class="form-control" />
+            </div>
+
+            <div style="display:flex; gap:12px; margin-top:8px;">
+              <div style="flex:1;"><label>Preferred Date & Time</label><input name="preferred_date_time" type="datetime-local" class="form-control" /></div>
+              <div style="flex:1;"><label>Notes for courier or staff</label><input name="notes" class="form-control" placeholder="Gate info, landmarks, availability" /></div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>4. Upload (Optional)</legend>
+            <label for="donationPhoto">Upload one photo of the item</label>
+            <input id="donationPhoto" type="file" name="donation_photo" class="form-control" accept="image/*" />
+            <div id="donationPreview" style="margin-top:10px; display:flex; flex-wrap:wrap; gap:8px;"></div>
+          </fieldset>
+
+          <div class="btn-row">
+            <button type="button" class="btn-back" onclick="window.history.back();">BACK</button>
+            <button type="submit" class="btn-custom">SUBMIT DONATION</button>
+          </div>
+        </form>
+      </div>
     </div>
-  </main>
+  </header>
 
   <script type="text/javascript" src="js/jquery.1.11.1.js"></script>
   <script type="text/javascript" src="js/bootstrap.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script type="text/javascript" src="js/supabase-init.js"></script>
+  <script type="text/javascript" src="js/storage-upload.js"></script>
+  <script type="text/javascript" src="js/donate-form-logic.js"></script>
+
+  <script>
+    // Toggle pickup address visibility based on donation method
+    // and enable/disable quantity inputs based on checkbox state.
+    (function(){
+      function updatePickupVisibility() {
+        var select = document.getElementById('donationMethodSelect');
+        var wrapper = document.getElementById('pickupAddressWrapper');
+        if (!select || !wrapper) return;
+        if (select.value === 'Request pick-up') {
+          wrapper.style.display = 'block';
+        } else {
+          wrapper.style.display = 'none';
+        }
+      }
+
+      function initItemToggles() {
+        var grid = document.querySelector('.items-grid');
+        if (!grid) return;
+
+        var checkboxes = grid.querySelectorAll('input.item-checkbox[type="checkbox"]');
+        var qtys = grid.querySelectorAll('.qty-input');
+
+        // disable all qty inputs initially
+        qtys.forEach(function(q){ q.disabled = true; q.setAttribute('min','1'); });
+
+        // hide other wrapper by default and disable its inputs
+        var otherWrapper = document.getElementById('otherWrapper');
+        var otherDesc = document.getElementById('item_other');
+        var otherQty = document.getElementById('qty_other');
+        if (otherWrapper) otherWrapper.style.display = 'none';
+        if (otherDesc) otherDesc.disabled = true;
+        if (otherQty) otherQty.disabled = true;
+
+        checkboxes.forEach(function(cb){
+          // determine corresponding qty name: replace leading item_ with qty_
+          var name = cb.getAttribute('name') || '';
+          var suffix = name.replace(/^item_/, '');
+          if (suffix.endsWith('_check')) suffix = suffix.replace(/_check$/, '');
+          var qtySelector = '[name="qty_' + suffix + '"]';
+          var qty = grid.querySelector(qtySelector);
+
+          // special-case other checkbox: id=item_other_check, qty name is qty_other
+          if (!qty && suffix === 'other') qty = document.getElementById('qty_other');
+
+          // set initial state from checkbox
+          if (cb.checked) {
+            if (qty) { qty.disabled = false; if (!qty.value) qty.value = 1; }
+            if (cb.id === 'item_other_check' && otherWrapper) otherWrapper.style.display = 'flex';
+          } else {
+            if (qty) { qty.disabled = true; }
+          }
+
+          cb.addEventListener('change', function(){
+            if (cb.checked) {
+              if (qty) { qty.disabled = false; if (!qty.value) qty.value = 1; }
+              if (cb.id === 'item_other_check' && otherWrapper) { otherWrapper.style.display = 'flex'; if (otherDesc) otherDesc.disabled = false; if (otherQty) otherQty.disabled = false; }
+            } else {
+              if (qty) { qty.disabled = true; qty.value = ''; }
+              if (cb.id === 'item_other_check' && otherWrapper) { otherWrapper.style.display = 'none'; if (otherDesc) { otherDesc.disabled = true; otherDesc.value = ''; } if (otherQty) { otherQty.disabled = true; otherQty.value = ''; } }
+            }
+          });
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', function(){
+        var select = document.getElementById('donationMethodSelect');
+        if (select) select.addEventListener('change', updatePickupVisibility);
+        // initial states
+        updatePickupVisibility();
+        initItemToggles();
+      });
+    })();
+  </script>
 </body>
 </html>

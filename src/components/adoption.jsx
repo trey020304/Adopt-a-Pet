@@ -73,63 +73,6 @@ export const Adoption = (props) => {
 
   return (
     <div id="adoption">
-      <style>{`
-        /* Animal details modal: responsive sizing and stacked layout on small screens */
-        .animal-details-modal {
-          position: fixed;
-          inset: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: rgba(0,0,0,0.6);
-          z-index: 1050;
-          padding: 20px;
-          box-sizing: border-box;
-        }
-
-        .animal-details-panel {
-          background: #fff;
-          border-radius: 12px;
-          width: 90%;
-          max-width: 920px;
-          max-height: 90vh;
-          overflow: auto;
-          box-shadow: 0 8px 30px rgba(0,0,0,0.18);
-          position: relative;
-          padding: 20px;
-          box-sizing: border-box;
-        }
-
-        .modal-close-btn, .preview-close-btn {
-          position: absolute;
-          top: 12px;
-          right: 12px;
-          background: #9c6644;
-          color: #fff;
-          border: none;
-          width: 36px;
-          height: 36px;
-          border-radius: 50%;
-          font-size: 20px;
-          line-height: 36px;
-          cursor: pointer;
-        }
-
-        .animal-details-content { display: flex; gap: 20px; align-items: flex-start; }
-        .animal-details-left { flex: 1; min-width: 220px; }
-        .animal-details-right { flex: 1; }
-        .animal-details-image { width: 100%; height: auto; border-radius: 8px; display: block; }
-        .animal-gallery { display: flex; gap: 8px; margin-top: 10px; justify-content: flex-start; }
-        .gallery-thumbnail { width: 56px; height: 56px; object-fit: cover; border-radius: 6px; cursor: pointer; }
-
-        @media (max-width: 720px) {
-          .animal-details-panel { width: 96%; padding: 12px; max-width: 560px; }
-          .animal-details-content { flex-direction: column; }
-          .animal-details-left, .animal-details-right { width: 100%; }
-          .gallery-thumbnail { width: 48px; height: 48px; }
-          .modal-close-btn, .preview-close-btn { top: 8px; right: 8px; width: 32px; height: 32px; font-size: 18px; }
-        }
-      `}</style>
       <div className="container">
         <div className="section-title text-center">
           <h2>Available for Adoption</h2>

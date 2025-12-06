@@ -770,8 +770,7 @@ header .intro-text {
   height: 4px;
   width: 60px;
   bottom: 0;
-  left: 50%;
-  margin-left: -30px;
+  left: 30px;
 }
 #contact h3 {
   color: #fff;
@@ -1303,86 +1302,4 @@ label {
     max-width: 100%;
     min-width: 220px;
   }
-}
-
-/* Register page styles moved from register.html */
-body.login-bg {
-  background: url('../img/intro-bg.jpg') center center no-repeat;
-  background-size: cover;
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-}
-.login-container {
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 18px;
-  box-shadow: 0 4px 32px rgba(0,0,0,0.10);
-  max-width: 400px;
-  margin: 120px auto 0 auto;
-  padding: 40px 32px 32px 32px;
-  text-align: center;
-}
-.login-container h2 {
-  font-size: 32px;
-  font-weight: 700;
-  margin-bottom: 24px;
-  color: #432818;
-}
-.login-container .form-group {
-  margin-bottom: 22px;
-  text-align: left;
-}
-.login-container label {
-  font-weight: 600;
-  color: #7f5539;
-  margin-bottom: 8px;
-  display: block;
-}
-.login-container input {
-  width: 100%;
-  padding: 12px 16px;
-  border-radius: 8px;
-  border: 1.5px solid #b08968;
-  font-size: 16px;
-  margin-bottom: 6px;
-  background: #f6f6f6;
-  transition: border-color 0.2s;
-}
-.login-container input:focus {
-  border-color: #9c6644;
-  outline: none;
-}
-.login-container .btn-login {
-  width: 100%;
-  padding: 12px 0;
-  background: linear-gradient(to right, #9c6644 0%, #7f5539 100%);
-  color: #fff;
-  font-size: 17px;
-  font-weight: 600;
-  border: none;
-  border-radius: 8px;
-  margin-top: 10px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.login-container .btn-login:hover {
-  background: #7f5539;
-}
-.login-container .login-link {
-  margin-top: 18px;
-  display: block;
-  color: #9c6644;
-  font-weight: 500;
-  text-decoration: underline;
-  font-size: 15px;
-}
-.login-container .register-link {
-  margin-top: 18px;
-  display: block;
-  color: #9c6644;
-  font-weight: 500;
-  text-decoration: underline;
-  font-size: 15px;
 }
